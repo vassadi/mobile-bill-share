@@ -1,0 +1,46 @@
+.wrapper {
+  width: 100%;
+  text-align: center;
+ 
+  input[type="radio"] {
+    display: none;
+    &:checked {
+      + .box {
+        background-color: steelblue;
+        color: white;
+       
+      }
+    }
+    &:disabled {
+      + .box {
+        color: rgba(0, 0, 0, 0.26);
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background-color: white
+      }
+    }
+  }
+  .box {
+    width: 70px;
+    height: 70px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background-color: transparent;
+    cursor: pointer;
+    vertical-align: middle;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 15px;
+    margin-right: 10px;
+    border-radius: 4px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border: 1px solid rgba(25, 118, 210, 0.5);
+    color: #1976d2;
+  
+  }
+}

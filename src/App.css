@@ -1,0 +1,114 @@
+#root {
+  /* max-width: 1280px; */
+  margin: 0 auto;
+  /* padding: 2rem; */
+  /* text-align: center; */
+}
+
+.contentRoot {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.calculator {
+  background: #fff;
+  margin-left: 10px;
+  padding: 20px;
+  border-radius: 10px;
+  width: 215px;
+}
+
+.data-grid {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+.text-center {
+  text-align: center;
+}
+
+.signup-wrapper {
+  margin: 8rem auto;
+  text-align: center;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.mt1 {
+  margin-top: 1rem;
+}
+
+.btn {
+  color: #fff;
+  background: linear-gradient(to right, #2193b0, #6dd5ed);
+  margin-bottom: 2rem;
+}
+
+.billing-month {
+  font-size: 20px;
+  width: 60px;
+  text-align: center;
+  border: 5px solid #c4cfff;
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.mr5 {
+  margin-right: 5px !important;
+  width: 70px !important;
+}
+
+div.css-qvtrhg-MuiDataGrid-virtualScroller {
+  min-height: 100px;
+}
+
+.plus-sign {
+  font-size: 24px !important;
+}
