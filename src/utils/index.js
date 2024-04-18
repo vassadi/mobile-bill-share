@@ -27,3 +27,15 @@ export const monthMapper = (monthYear) => {
   }
   return 'monthYear';
 };
+
+const padToString = (num) => {
+  return String('0' + num).slice(-2);
+};
+
+export const monthYearSortComparator = (a, b) => {
+  const [ay, am] = a.split('-');
+  const [by, bm] = b.split('-');
+  const aa = ay + padToString(am);
+  const bb = by + padToString(bm);
+  return aa - bb;
+};

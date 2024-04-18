@@ -50,13 +50,13 @@
   background: #fff;
   margin-left: 10px;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 0 10px 10px 0;
   width: 215px;
 }
 
 .data-grid {
   background-color: #fff;
-  border-radius: 10px;
+  border-radius: 10px 0 0 10px !important;
   padding: 20px;
 }
 
@@ -111,4 +111,12 @@ div.css-qvtrhg-MuiDataGrid-virtualScroller {
 
 .plus-sign {
   font-size: 24px !important;
+}
+
+.MuiDataGrid-columnHeaderTitle {
+  font-weight: bold !important;
+}
+
+.headerBackground {
+  background-color: rgba(224, 224, 224, 1);
 }

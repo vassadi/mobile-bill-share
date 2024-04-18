@@ -2,7 +2,9 @@
 import { Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import FlexDiv from '../FlexDiv';
-import { memo, useEffect, useState } from 'react';
+import { memo, useContext, useEffect, useState } from 'react';
+import { UserContext } from '../../../context/userContext';
+import { monthYearSortComparator } from '../../../utils';
 
 const cellEditValidation = (params) => {
   if (params.hasChanged) {
@@ -19,8 +21,13 @@ const additionalColConfig = (mode) => ({
 
 const getColumnConfig = (mode) => {
   const columns = [
-    { field: 'name', headerName: 'Name', width: 175 },
-    { field: 'lineCost', headerName: 'Line Cost', w: 100 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      width: 175,
+      // headerClassName: 'headerBackground',
+      // cellClassName: 'headerBackground',
+    },
     {
       field: 'devices',
       headerName: 'Device Charge',
@@ -51,23 +58,58 @@ const getColumnConfig = (mode) => {
       width: 150,
       ...(mode === 'edit' && { editable: true }),
     },
-    { field: 'costPerLine', headerName: 'Individual price', w: 100 },
+    {
+      field: 'costPerLine',
+      headerName: 'Individual price',
+      w: 100,
+
+      valueFormatter: ({ value }) => (value ? `$${value}` : ''),
+    },
   ];
+
+  columns.map((c) => {
+    c.headerClassName = 'headerBackground1';
+  });
   return columns;
 };
 
 // eslint-disable-next-line react/prop-types, react/display-name
-const BillingTable = memo(({ rows, mode, onSave, onCancel }) => {
-  console.log(' ***  BILLING TABLE  ***');
+const BillingTable = ({
+  mode,
+  selectedMonth,
+  onSave,
+  onCancel,
+  updateCharges,
+}) => {
+  const { usersList, monthlyBills } = useContext(UserContext);
 
-  const [updatedRows, setUpdatedRows] = useState([...rows]);
-
-  useEffect(() => {
-    setUpdatedRows(rows);
-  }, [rows]);
   const isEditable = mode === 'edit';
 
-  const columns = getColumnConfig(mode);
+  const [updatedRows, setUpdatedRows] = useState([]);
+
+  const compare = (a, b) => {
+    return a.name < b.name ? -1 : 1;
+  };
+  useEffect(() => {
+    console.log(' ***  BILLING TABLE  ***');
+
+    const getRowstoAdd = () => {
+      const xx = usersList
+        .filter((user) => user.isActive && !user.isFree)
+        .map(({ id, name }) => ({ id, name }));
+
+      return xx;
+    };
+
+    const key =
+      selectedMonth ||
+      Object.keys(monthlyBills)?.sort(monthYearSortComparator)?.[0];
+    const monthlyBill = monthlyBills[key];
+    const rows = isEditable ? getRowstoAdd() : monthlyBill.details;
+    const sortedRows = Array.from(rows).sort(compare);
+
+    setUpdatedRows(sortedRows);
+  }, [monthlyBills, selectedMonth, isEditable, usersList]);
 
   const getFooter = () => (
     <FlexDiv justify={'right'} margin="15px 0 0 0">
@@ -84,43 +126,49 @@ const BillingTable = memo(({ rows, mode, onSave, onCancel }) => {
     </FlexDiv>
   );
 
+  const columns = getColumnConfig(mode);
+  const slots = { footer: getFooter };
+  const initialState = {
+    pagination: { paginationModel: { pageSize: 25 } },
+  };
+  const stopEditCell = (edited, event) => {
+    if (edited.reason === 'enterKeyDown' || edited.reason === 'cellFocusOut') {
+      const row = edited.row;
+      const updatedRow = {
+        ...row,
+        [edited.field]: event.target?.value || 0,
+      };
+      const index = updatedRows.findIndex((row) => row.id === edited.id);
+      const tempData = [...updatedRows];
+      tempData[index] = { ...tempData[index], ...updatedRow };
+
+      setUpdatedRows(tempData);
+      updateCharges(tempData);
+    }
+  };
+
   return (
     <DataGrid
       className="data-grid"
-      rows={rows}
+      rows={updatedRows}
       columns={columns}
       rowHeight={35}
       pageSizeOptions={[25, 50, 75, 100]}
-      initialState={{
-        pagination: { paginationModel: { pageSize: 25 } },
-      }}
+      initialState={initialState}
       sx={{
         '& .MuiDataGrid-columnHeaderTitle': {
           whiteSpace: 'break-spaces',
           lineHeight: 1.3,
         },
       }}
-      {...(isEditable && { slots: { footer: getFooter } })}
+      {...(isEditable && { slots: slots })}
       hideFooterSelectedRowCount
       experimentalFeatures={{ newEditingApi: true }}
-      onCellEditStop={(edited, event) => {
-        if (
-          edited.reason === 'enterKeyDown' ||
-          edited.reason === 'cellFocusOut'
-        ) {
-          const updatedRow = {
-            ...edited.row,
-            [edited.field]: event.target?.value,
-          };
-          const index = rows.findIndex((row) => row.id === edited.id);
-          const tempData = [...updatedRows];
-          tempData[index] = { ...tempData[index], ...updatedRow };
-          setUpdatedRows(tempData);
-          // updateCharges(tempData);
-        }
-      }}
+      onCellEditStop={stopEditCell}
     />
   );
-});
+};
 
-export default BillingTable;
+const MemoizedBillingTable = memo(BillingTable);
+
+export default MemoizedBillingTable;

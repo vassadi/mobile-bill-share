@@ -1,17 +1,23 @@
 /* eslint-disable react/prop-types */
-import { monthMapper } from '../../../utils';
+import { useContext, useEffect } from 'react';
+
+import { UserContext } from '../../../context/userContext';
+import { monthMapper, monthYearSortComparator } from '../../../utils';
 
 import './styles.scss';
 
-export const BillingMonthBlock = ({
-  data = {},
-  mode,
-  callback,
-  selectedMonth,
-}) => {
+const BillingMonthBlock = ({ mode, callback, selectedMonth }) => {
+  const { monthlyBills } = useContext(UserContext);
+
+  const months = Object.keys(monthlyBills).sort(monthYearSortComparator);
+
+  useEffect(() => {
+    console.log('***  Billing Blcoks  ***');
+  }, []);
+
   return (
     <div className="wrapper">
-      {Object.keys(data).map((month) => {
+      {months.map((month) => {
         return (
           <label key={month}>
             <input
@@ -20,7 +26,7 @@ export const BillingMonthBlock = ({
               disabled={mode === 'edit'}
               checked={selectedMonth === month}
               onChange={() => {
-                callback(month);
+                callback?.(month);
               }}
             />
             <div className="box">
