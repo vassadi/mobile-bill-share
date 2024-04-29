@@ -2,10 +2,10 @@
 import { useState } from 'react';
 
 import OtpInput from 'react-otp-input';
-import PhoneInput from 'react-phone-input-2';
+// import PhoneInput from 'react-phone-input-2';
 import { Toaster, toast } from 'react-hot-toast';
 import { BsFillShieldLockFill } from 'react-icons/bs';
-import { auth } from '../../../config/getClientConfig';
+import { auth, firebaseClientApp } from '../../../config/getClientConfig';
 import {
   RecaptchaVerifier,
   getAuth,
@@ -13,10 +13,11 @@ import {
 } from 'firebase/auth';
 
 import 'react-phone-input-2/lib/style.css';
+import { TextField } from '@mui/material';
 
-const OTP = ({ setAuthenticated }) => {
+const OTP = ({ prefilled = '', setAuthenticated, successCallback }) => {
   const [otp, setOtp] = useState('');
-  const [ph, setPh] = useState('');
+  const [ph, setPh] = useState(prefilled);
   const [showOtp, setShowOtp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(false);
@@ -42,9 +43,9 @@ const OTP = ({ setAuthenticated }) => {
     setLoading(true);
     onCaptchaVerify();
     const appVerifier = window.recaptchaVerifier;
-    const phoneNumber = '+' + ph;
+    const phoneNumber = '+1' + ph;
 
-    signInWithPhoneNumber(getAuth(firebaseApp), phoneNumber, appVerifier)
+    signInWithPhoneNumber(getAuth(firebaseClientApp), phoneNumber, appVerifier)
       .then((confirmationResult) => {
         window.confirmationResult = confirmationResult;
         setLoading(false);
@@ -68,6 +69,8 @@ const OTP = ({ setAuthenticated }) => {
         setLoading(false);
         toast.success('OTP verified Sucessfully');
         setAuthenticated(true);
+        successCallback?.();
+        window.sessionStorage.setItem('userInfo', JSON.stringify(user));
         window.sessionStorage.setItem('accessToken', user.accessToken);
         // console.log('********************', auth.currentUser);
       })
@@ -99,8 +102,11 @@ const OTP = ({ setAuthenticated }) => {
                     <input
                       {...props}
                       style={{
-                        width: '30px',
+                        width: '35px',
+                        height: '35px',
                         marginRight: '12px',
+                        textAlign: 'center',
+                        fontSize: '16px',
                       }}
                     />
                   )}
@@ -121,32 +127,42 @@ const OTP = ({ setAuthenticated }) => {
                 </div>
               </div>
             ) : (
-              <div className="signup-wrapper">
-                <h2>Sign In</h2>
-                <h6 className="text-center mt-3">
-                  Sign in using your mobile number
-                </h6>
-                <PhoneInput
-                  country={'us'}
-                  value={ph}
-                  onChange={setPh}
-                ></PhoneInput>
-                <div className="d-flex justify-content-center">
-                  <button
-                    className="btn btn-primary mt1 w-75 "
-                    onClick={onSignup}
-                  >
-                    {loading && (
-                      <span
-                        className="spinner-border spinner-border-sm"
-                        style={{ marginRight: '10px' }}
-                      ></span>
-                    )}
-                    <span>Send OTP Via SMS</span>
-                  </button>
+              <>
+                <div className="signup-wrapper">
+                  <h6 className="text-center mt-3">
+                    Sign in using your mobile number*
+                  </h6>
+
+                  <TextField
+                    value={ph}
+                    id="standard-basic5"
+                    label="Mobile number"
+                    variant="standard"
+                    margin="dense"
+                    fullWidth
+                    onChange={(e) => setPh(e.target.value)}
+                    disabled={prefilled ? true : false}
+                  />
+                  <br />
+
+                  <div className="d-flex justify-content-center">
+                    <button
+                      className="btn btn-primary mt1 w-75 "
+                      onClick={onSignup}
+                    >
+                      {loading && (
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          style={{ marginRight: '10px' }}
+                        ></span>
+                      )}
+                      <span>Send OTP Via SMS</span>
+                    </button>
+                  </div>
+                  <div id="recaptcha-container" className="mt-6"></div>
                 </div>
-                <div id="recaptcha-container" className="mt-6"></div>
-              </div>
+                <p className="disclosure">*message and data rates may apply</p>
+              </>
             )}
           </div>
         </div>

@@ -39,3 +39,9 @@ export const monthYearSortComparator = (a, b) => {
   const bb = by + padToString(bm);
   return aa - bb;
 };
+
+export const phoneFormatter = (value) => {
+  return value
+    ? value.replace(/\D+/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+    : '';
+};

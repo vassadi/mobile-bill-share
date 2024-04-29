@@ -6,10 +6,12 @@ import { monthMapper, monthYearSortComparator } from '../../../utils';
 
 import './styles.scss';
 
-const BillingMonthBlock = ({ mode, callback, selectedMonth }) => {
+const BillingMonthBlock = ({ mode, onUpdate, selectedMonth }) => {
   const { monthlyBills } = useContext(UserContext);
 
-  const months = Object.keys(monthlyBills).sort(monthYearSortComparator);
+  const months = Object.keys(monthlyBills)
+    .sort(monthYearSortComparator)
+    .slice(-6);
 
   useEffect(() => {
     console.log('***  Billing Blcoks  ***');
@@ -26,7 +28,7 @@ const BillingMonthBlock = ({ mode, callback, selectedMonth }) => {
               disabled={mode === 'edit'}
               checked={selectedMonth === month}
               onChange={() => {
-                callback?.(month);
+                onUpdate?.(month);
               }}
             />
             <div className="box">

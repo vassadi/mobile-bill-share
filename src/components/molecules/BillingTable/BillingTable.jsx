@@ -14,7 +14,7 @@ const cellEditValidation = (params) => {
 };
 
 const additionalColConfig = (mode) => ({
-  ...(mode === 'edit' && { editable: true }),
+  ...(mode === 'edit' && { editable: true, cellClassName: 'headerBackground' }),
   preProcessEditCellProps: cellEditValidation,
   valueFormatter: ({ value }) => (value ? `$${value}` : ''),
 });
@@ -62,7 +62,6 @@ const getColumnConfig = (mode) => {
       field: 'costPerLine',
       headerName: 'Individual price',
       w: 100,
-
       valueFormatter: ({ value }) => (value ? `$${value}` : ''),
     },
   ];
@@ -105,7 +104,7 @@ const BillingTable = ({
       selectedMonth ||
       Object.keys(monthlyBills)?.sort(monthYearSortComparator)?.[0];
     const monthlyBill = monthlyBills[key];
-    const rows = isEditable ? getRowstoAdd() : monthlyBill.details;
+    const rows = isEditable ? getRowstoAdd() : monthlyBill?.details || [];
     const sortedRows = Array.from(rows).sort(compare);
 
     setUpdatedRows(sortedRows);

@@ -19,9 +19,17 @@ import {
   GridToolbarContainer,
 } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
-import { doc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  deleteField,
+  doc,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import { store } from '../../../config/getClientConfig';
 import { UserContext } from '../../../context/userContext';
+import { phoneFormatter } from '../../../utils';
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -30,16 +38,18 @@ const Transition = forwardRef(function Transition(props, ref) {
 const EditToolbar = (props) => {
   const { setRows, setRowModesModel } = props;
 
-  const handleClick = () => {
-    const id = `user_${Date.now()}`; // randomId();
+  const handleAddClick = () => {
+    const id = `user_${Date.now()}`;
     setRows((oldRows) => [
       ...oldRows,
       {
-        id,
+        id: id,
         name: '',
         number: '',
         isAdmin: false,
         isActive: false,
+        isFixed: false,
+        isFree: false,
         isNew: true,
       },
     ]);
@@ -51,7 +61,7 @@ const EditToolbar = (props) => {
 
   return (
     <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+      <Button color="primary" startIcon={<AddIcon />} onClick={handleAddClick}>
         Add record
       </Button>
     </GridToolbarContainer>
@@ -59,7 +69,9 @@ const EditToolbar = (props) => {
 };
 
 const AdminModule = ({ open, handleClose }) => {
-  const { usersList } = useContext(UserContext);
+  const context = useContext(UserContext);
+
+  const { usersList, groupId, isAdmin } = context;
   console.log('*** ADMIN MODULE ***');
 
   const [rows, setRows] = useState([...usersList]);
@@ -80,7 +92,26 @@ const AdminModule = ({ open, handleClose }) => {
   };
 
   const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+
+    // const deletedRow = rows.find((row) => row.id === id);
+
+    const document = doc(store, 'users', id);
+    deleteDoc(document).then(() => {
+      console.log('Deleted...');
+      setRows(rows.filter((row) => row.id !== id));
+    });
+
+    // const docData = { [`${deletedRow.number}`]: deleteField() };
+
+    // updateDoc(document, docData)
+    //   .then(() => {
+    //     console.log('success');
+    //     setRows(rows.filter((row) => row.id !== id));
+    //   })
+    //   .catch(() => {
+    //     console.log('ERROR');
+    //   });
   };
 
   const handleCancelClick = (id) => () => {
@@ -95,19 +126,32 @@ const AdminModule = ({ open, handleClose }) => {
     }
   };
 
-  const processRowUpdate = (newRow) => {
+  const processRowUpdate = (newRow, groupId) => {
     const { isNew, ...rest } = newRow;
 
     console.log('new row => ', isNew);
-    const document = doc(store, 'billshare/usersList');
-    const docData = { [`${newRow.number}`]: { ...rest } };
+    let document = '';
 
-    updateDoc(document, docData, { merge: true })
+    const docData = { ...rest };
+    const mergeData = {};
+
+    if (isNew) {
+      document = doc(collection(store, 'users'));
+      docData.id = document.id;
+      docData.groupId = groupId;
+    } else {
+      document = doc(store, 'users', newRow.id);
+      mergeData.merge = true;
+    }
+
+    // document.set(docData);
+
+    setDoc(document, docData, mergeData)
       .then(() => {
         console.log('success');
       })
-      .catch(() => {
-        console.log('ERROR');
+      .catch((e) => {
+        console.log('ERROR', e);
       });
 
     const updatedRow = { ...newRow, isNew: false };
@@ -120,10 +164,17 @@ const AdminModule = ({ open, handleClose }) => {
   };
 
   const tcolumns = [
+    { field: 'groupId', headerName: 'Group ID' },
     { field: 'name', headerName: 'Name', width: 175, editable: true },
-    { field: 'number', headerName: 'Mobile', width: 150, editable: true },
     {
-      field: 'Admin',
+      field: 'number',
+      headerName: 'Mobile',
+      width: 150,
+      editable: true,
+      valueFormatter: ({ value }) => phoneFormatter(value),
+    },
+    {
+      field: 'isAdmin',
       headerName: 'is Admin',
       type: 'boolean',
       width: 150,
@@ -158,6 +209,8 @@ const AdminModule = ({ open, handleClose }) => {
       width: 100,
       cellClassName: 'actions',
       getActions: ({ id }) => {
+        if (!isAdmin) return [];
+
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
@@ -228,19 +281,24 @@ const AdminModule = ({ open, handleClose }) => {
 
         <DataGrid
           className="data-grid"
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                groupId: false,
+              },
+            },
+          }}
           columns={tcolumns}
           rows={rows}
           editMode="row"
           rowModesModel={rowModesModel}
           onRowModesModelChange={handleRowModesModelChange}
           onRowEditStop={handleRowEditStop}
-          processRowUpdate={processRowUpdate}
+          processRowUpdate={(newRow) => processRowUpdate(newRow, groupId)}
           onProcessRowUpdateError={(error) => {
             console.log(error);
           }}
-          slots={{
-            toolbar: EditToolbar,
-          }}
+          slots={isAdmin ? { toolbar: EditToolbar } : {}}
           slotProps={{
             toolbar: { setRows, setRowModesModel },
           }}
