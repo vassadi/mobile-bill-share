@@ -15,10 +15,8 @@ import BillingDetails from '../BillingDetails/BillingDetails';
 import FlexDiv from '../../molecules/FlexDiv';
 import {
   collection,
-  documentId,
   getDocs,
   onSnapshot,
-  orderBy,
   query,
   where,
 } from 'firebase/firestore';
@@ -36,23 +34,6 @@ const Dashboard = () => {
   const [months, setMonths] = useState([]);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-  const getPath = (x, y, width, height) => {
-    return `M${x},${y + height}C${x + width / 3},${y + height} ${
-      x + width / 2
-    },${y + height / 3}
-    ${x + width / 2}, ${y}
-    C${x + width / 2},${y + height / 3} ${x + (2 * width) / 3},${y + height} ${
-      x + width
-    }, ${y + height}
-    Z`;
-  };
-
-  const TriangleBar = (props) => {
-    const { fill, x, y, width, height } = props;
-
-    return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,11 +88,12 @@ const Dashboard = () => {
         console.log('Initial/Updated bills: ', dataObject);
 
         const months = Object.keys(dataObject.monthlyBills).reduce((a, x) => {
-          const xx = { ...dataObject.monthlyBills[x], key: monthMapper(x) };
+          const xx = { ...dataObject.monthlyBills[x], key: x };
           a.push(xx);
           return a;
         }, []);
 
+        setActiveIndex(months[0].key);
         setMonths(months);
         setData(dataObject);
       });
@@ -127,8 +109,8 @@ const Dashboard = () => {
     // return unsubscribe();
   }, []);
 
-  const handleClick = (data, index) => {
-    setActiveIndex(index);
+  const handleClick = (data) => {
+    setActiveIndex(data.key);
   };
 
   if (!data) return null;
@@ -138,51 +120,60 @@ const Dashboard = () => {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Header />
         <div className="contentRoot">
-          <FlexDiv>
-            <ResponsiveContainer width="70%" height={300}>
-              <BarChart data={months} height={'90%'}>
-                <XAxis dataKey="key" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="totalBill"
-                  onClick={handleClick}
-                  label={{ position: 'top' }}
-                >
-                  {months.map((entry, index) => (
-                    <Cell
-                      cursor="pointer"
-                      fill={index === activeIndex ? '#82ca9d' : '#8884d8'}
-                      key={`cell-${index}`}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          {months.length > 0 && (
+            <FlexDiv>
+              <ResponsiveContainer width="70%" height={300}>
+                <BarChart data={months}>
+                  <XAxis dataKey="key" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar
+                    dataKey="totalBill"
+                    onClick={handleClick}
+                    label={{ position: 'top' }}
+                  >
+                    {months.map((entry, index) => (
+                      <Cell
+                        cursor="pointer"
+                        fill={entry.key === activeIndex ? '#82ca9d' : '#8884d8'}
+                        key={`cell-${index}`}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
 
-            <ResponsiveContainer width="30%" height={300}>
-              <PieChart>
-                <Tooltip />
-                <Pie
-                  data={months}
-                  cx={'50%'}
-                  cy={'50%'}
-                  outerRadius={120}
-                  fill="#8884d8"
-                  paddingAngle={2}
-                  dataKey="chargeableLines"
-                >
-                  {months.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </FlexDiv>
-          <BillingDetails />
+              <ResponsiveContainer width="30%" height={300}>
+                {activeIndex ? (
+                  <PieChart>
+                    <Tooltip />
+                    <Pie
+                      data={data.monthlyBills[activeIndex].details}
+                      cx={'50%'}
+                      cy={'50%'}
+                      outerRadius={120}
+                      fill="#8884d8"
+                      paddingAngle={2}
+                      dataKey="costPerLine"
+                    >
+                      {months.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                ) : (
+                  <div> Plese select graph to see the individual bill.</div>
+                )}
+              </ResponsiveContainer>
+            </FlexDiv>
+          )}
+          <BillingDetails
+            preSelectedMonth={activeIndex}
+            handleSelectedMonthChange={(x) => setActiveIndex(x)}
+          />
         </div>
       </LocalizationProvider>
     </UserContextProvider>

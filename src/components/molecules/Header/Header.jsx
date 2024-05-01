@@ -1,10 +1,17 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { IconButton } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
-import AdminModule from '../../organisms/AdminModule/AdminModule';
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 
-import '../../../App.css';
+import AdminModule from '../../organisms/AdminModule/AdminModule';
+import { deepOrange } from '@mui/material/colors';
+import { Logout, Settings } from '@mui/icons-material';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -13,19 +20,60 @@ const StyledDiv = styled.div`
 `;
 
 const Header = () => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const [showUsers, setShowUsers] = useState(false);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (item) => {
+    setAnchorEl(null);
+    setShowUsers(false);
+    if (item === 'users') setShowUsers(true);
+  };
 
   return (
     <StyledDiv>
       <h1>Bill Share</h1>
 
-      <IconButton aria-label="settings" size="large" onClick={handleOpen}>
-        <SettingsIcon fontSize="inherit" />
+      <IconButton aria-label="settings" size="small" onClick={handleClick}>
+        <Avatar sx={{ bgcolor: deepOrange[500], width: 52, height: 52 }}>
+          S
+        </Avatar>
       </IconButton>
 
-      {open && <AdminModule open={open} handleClose={handleClose} />}
+      {showUsers && <AdminModule open={showUsers} handleClose={handleClose} />}
+
+      <Menu
+        dense
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={() => handleClose()}>
+          <ListItemIcon>
+            <Avatar sx={{ width: 24, height: 24 }} />
+          </ListItemIcon>
+          Profile
+        </MenuItem>
+
+        <MenuItem onClick={() => handleClose('users')}>
+          <ListItemIcon>
+            <Settings />
+          </ListItemIcon>
+          Group members
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={() => handleClose('logout')}>
+          <ListItemIcon>
+            <Logout />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
     </StyledDiv>
   );
 };

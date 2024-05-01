@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { UserContext } from '../../../context/userContext';
@@ -5,24 +6,26 @@ import { UserContext } from '../../../context/userContext';
 import Button from '@mui/material/Button';
 import { InputAdornment } from '@mui/material';
 import TextField from '@mui/material/TextField';
-
 import { DatePicker } from '@mui/x-date-pickers';
 
+import { store } from '../../../config/getClientConfig';
 import { collection, doc, setDoc } from 'firebase/firestore';
 
-import FlexDiv from '../../molecules/FlexDiv';
 import BillingMonthBlock from '../../atoms/BillingMonthBlock';
 
-import { store } from '../../../config/getClientConfig';
-
-import BillingTable from '../../molecules/BillingTable';
+import FlexDiv from '../../molecules/FlexDiv';
 import Charges from '../../molecules/Charges';
+import BillingTable from '../../molecules/BillingTable';
 
-import { formatter, monthYearSortComparator } from '../../../utils';
+import {
+  currencyFormatter,
+  getChargesFromRows,
+  monthYearSortComparator,
+} from '../../../utils';
 
 const initialCharges = { devices: 0, additional: 0, kickbacks: 0, credits: 0 };
 
-const BillingDetails = () => {
+const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
   const data = useContext(UserContext);
 
   const [totalBill, setTotalBill] = useState(0);
@@ -31,14 +34,19 @@ const BillingDetails = () => {
 
   const [mode, setMode] = useState('view');
   const [billingMonth, setBillingMonth] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState(preSelectedMonth);
   const isAdmin = data.isAdmin;
 
   const handleModeChange = useCallback((m) => setMode(m), []);
 
   useEffect(() => {
+    setSelectedMonth(preSelectedMonth);
+  }, [preSelectedMonth]);
+  useEffect(() => {
     const months = Object.keys(data.monthlyBills);
-    const key = months?.sort(monthYearSortComparator)?.[months.length - 1];
+    const key =
+      selectedMonth ||
+      months?.sort(monthYearSortComparator)?.[months.length - 1];
     const monthlyBill = data.monthlyBills[key] || {};
     setTotalBill(monthlyBill.totalBill || 0);
     setChargeableLines(monthlyBill.chargeableLines);
@@ -88,6 +96,7 @@ const BillingDetails = () => {
       const monthlyBill = data.monthlyBills[key];
 
       setSelectedMonth(key);
+      handleSelectedMonthChange(key);
       setTotalBill(monthlyBill.totalBill);
       setChargeableLines(monthlyBill.chargeableLines);
 
@@ -103,23 +112,32 @@ const BillingDetails = () => {
   const saveBill = useCallback(
     async (dataToAdd) => {
       const numberOfLines = getChargeableLines();
-      console.log(charges);
+
+      const chargesData = getChargesFromRows(dataToAdd, initialCharges);
+      const lineCost =
+        (totalBill -
+          chargesData.devices -
+          chargesData.additional +
+          chargesData.kickbacks +
+          chargesData.credits) /
+        numberOfLines;
+
       dataToAdd.map((row) => {
         console.log(row);
 
-        const sum =
-          (+row.devices || 0) +
-          (+row.additional || 0) -
-          (+row.kickbacks || 0) -
-          (+row.credits || 0);
-
-        const { isFixed } = data.usersList.filter(
+        const [{ isFixed }] = data.usersList.filter(
           (user) => user.name === row.name
         );
+        const additionalCharge =
+          +(row.devices || 0) +
+          +(row.additional || 0) -
+          +(row.kickbacks || 0) -
+          +(row.credits || 0);
+
         if (isFixed) {
-          row.costPerLine = sum;
+          row.costPerLine = +additionalCharge.toFixed(2);
         } else {
-          row.costPerLine = (+totalBill - sum) / numberOfLines;
+          row.costPerLine = +(lineCost + additionalCharge).toFixed(2);
         }
       });
 
@@ -130,8 +148,8 @@ const BillingDetails = () => {
       const monthKey = billingMonth.format('YYYY-MM');
       const docData = {
         [monthKey]: {
-          totalBill,
-          chargeableLines: getChargeableLines(),
+          totalBill: +totalBill,
+          chargeableLines: numberOfLines,
           details: [...dataToAdd],
         },
       };
@@ -208,7 +226,7 @@ const BillingDetails = () => {
               />
             </>
           ) : (
-            <h2>{formatter(totalBill)}</h2>
+            <h2>{currencyFormatter(totalBill)}</h2>
           )}
         </div>
       </FlexDiv>

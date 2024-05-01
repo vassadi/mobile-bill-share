@@ -16,7 +16,7 @@ const cellEditValidation = (params) => {
 const additionalColConfig = (mode) => ({
   ...(mode === 'edit' && { editable: true, cellClassName: 'headerBackground' }),
   preProcessEditCellProps: cellEditValidation,
-  valueFormatter: ({ value }) => (value ? `$${value}` : ''),
+  valueFormatter: ({ value }) => (value ? `$ ${value}` : ''),
 });
 
 const getColumnConfig = (mode) => {
@@ -24,45 +24,41 @@ const getColumnConfig = (mode) => {
     {
       field: 'name',
       headerName: 'Name',
-      width: 175,
+      width: 170,
       // headerClassName: 'headerBackground',
       // cellClassName: 'headerBackground',
     },
     {
       field: 'devices',
       headerName: 'Device Charge',
-      w: 120,
       ...additionalColConfig(mode),
     },
     {
       field: 'additional',
       headerName: 'Additional Charge',
-      w: 150,
       ...additionalColConfig(mode),
     },
     {
       field: 'kickbacks',
       headerName: 'Kickback Discount',
-      w: 100,
       ...additionalColConfig(mode),
     },
     {
       field: 'credits',
       headerName: 'Credit',
-      w: 100,
       ...(mode === 'edit' && { editable: true }),
     },
     {
       field: 'notes',
       headerName: 'Notes',
-      width: 150,
+      width: 170,
       ...(mode === 'edit' && { editable: true }),
     },
     {
       field: 'costPerLine',
       headerName: 'Individual price',
-      w: 100,
-      valueFormatter: ({ value }) => (value ? `$${value}` : ''),
+      width: 150,
+      valueFormatter: ({ value }) => (value ? `$ ${value}` : ''),
     },
   ];
 

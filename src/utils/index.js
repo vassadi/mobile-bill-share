@@ -1,4 +1,4 @@
-export const formatter = (amount) => {
+export const currencyFormatter = (amount) => {
   const options = { style: 'currency', currency: 'USD' };
   const numberFormat2 = new Intl.NumberFormat('en-US', options);
 
@@ -44,4 +44,20 @@ export const phoneFormatter = (value) => {
   return value
     ? value.replace(/\D+/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
     : '';
+};
+
+export const getChargesFromRows = (rows, initialCharges) => {
+  const charges = rows?.reduce(
+    (x, y) => {
+      x.devices += +(y.devices || 0);
+      x.additional += +(y.additional || 0);
+      x.kickbacks += +(y.kickbacks || 0);
+      x.credits += +(y.credits || 0);
+
+      return x;
+    },
+    { ...initialCharges }
+  );
+
+  return charges;
 };
