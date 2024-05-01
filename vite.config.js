@@ -5,9 +5,4 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   base: '/mobile-bill-share/',
-  build: {
-    rollupOptions: {
-      external: ['firebase-admin'],
-    },
-  },
 });
