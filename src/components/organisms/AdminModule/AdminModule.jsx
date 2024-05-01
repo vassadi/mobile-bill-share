@@ -1,16 +1,17 @@
 /* eslint-disable react/prop-types */
+import { forwardRef, useContext, useState } from 'react';
 
 import { Button, Slide } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import CancelIcon from '@mui/icons-material/Cancel';
-import SaveIcon from '@mui/icons-material/Save';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { forwardRef, useContext, useState } from 'react';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -18,15 +19,7 @@ import {
   GridRowModes,
   GridToolbarContainer,
 } from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import {
-  collection,
-  deleteDoc,
-  deleteField,
-  doc,
-  setDoc,
-  updateDoc,
-} from 'firebase/firestore';
+import { collection, deleteDoc, doc, setDoc } from 'firebase/firestore';
 import { store } from '../../../config/getClientConfig';
 import { UserContext } from '../../../context/userContext';
 import { phoneFormatter } from '../../../utils';

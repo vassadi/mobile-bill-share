@@ -56,6 +56,7 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
     }
 
     setSelectedMonth(key);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startAdding = () => {
@@ -167,6 +168,7 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
         });
       setMode('view');
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [billingMonth, totalBill, data]
   );
 

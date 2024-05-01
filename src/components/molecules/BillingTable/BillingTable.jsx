@@ -68,7 +68,6 @@ const getColumnConfig = (mode) => {
   return columns;
 };
 
-// eslint-disable-next-line react/prop-types, react/display-name
 const BillingTable = ({
   mode,
   selectedMonth,

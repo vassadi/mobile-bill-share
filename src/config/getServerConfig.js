@@ -1,4 +1,3 @@
-import admin from 'firebase-admin';
 // import { getFirestore } from 'firebase-admin/firestore';
 
 import serviceKey from '../../billshare-e3025-2ba5106ab59e.json';

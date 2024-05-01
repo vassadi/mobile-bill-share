@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import { useState } from 'react';
 
 import LoginPage from './components/organisms/LoginPage';
@@ -14,9 +13,7 @@ function App() {
   return (
     <>
       {isAuthenticated || userSession ? (
-        <>
-          <Dashboard />
-        </>
+        <Dashboard />
       ) : (
         <LoginPage setAuthenticated={setAuthenticated} />
       )}

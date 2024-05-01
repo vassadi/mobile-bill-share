@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
 import {
   Bar,
@@ -26,7 +25,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import Header from '../../molecules/Header';
-import { monthMapper } from '../../../utils';
 
 const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState();
