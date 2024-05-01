@@ -1,16 +1,16 @@
 {
-  "name": "mobile-bill",
+  "name": "mobile-bill-share",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://vassadi.github.io/mobile-bill-share",
+  "homepage": "https://vassadi.github.io/mobile-bill-share/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@mui/icons-material": "^5.14.19",
