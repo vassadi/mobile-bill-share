@@ -1,9 +1,8 @@
 {
-  "name": "mobile-bill",
+  "name": "mobile-bill-share",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://vassadi.github.io/mobile-bill-share",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
