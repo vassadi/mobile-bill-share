@@ -31,80 +31,94 @@ const Dashboard = () => {
   const [data, setData] = useState('');
   const [months, setMonths] = useState([]);
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  const COLORS = [
+    '#0088FE',
+    '#00C49F',
+    '#FFBB28',
+    '#FF8042',
+    'orangered',
+    'olivedrab',
+    'violet',
+  ];
 
   useEffect(() => {
+    const dataObject = {};
+
     const fetchData = async () => {
       const userSession = sessionStorage.getItem('userInfo');
       const userInfo = userSession ? JSON.parse(userSession) : {};
       const phoneNumber = userInfo?.phoneNumber?.slice(-10);
 
-      const dataObject = {};
-
-      // Get Group ID
-      const usersRef = collection(store, 'users');
-      const snap = query(usersRef, where('number', '==', phoneNumber));
-      const docs = await getDocs(snap);
-      docs.forEach((doc) => {
-        const { groupId, isAdmin } = doc.data();
-        dataObject.groupId = groupId;
-        dataObject.isAdmin = isAdmin;
-      });
-
-      const groupRef = collection(
-        store,
-        'groups',
-        dataObject.groupId,
-        'monthlyBills'
-      );
-
-      const userQuery = query(
-        usersRef,
-        where('groupId', '==', dataObject.groupId)
-      );
-
-      const groupQuery = query(groupRef);
-
-      onSnapshot(userQuery, (querySnapshot) => {
-        const usersList = [];
-        // const snapChanges = querySnapshot.docChanges();
-        querySnapshot.forEach((doc) => {
-          usersList.push({ ...doc.data(), id: doc.id });
+      try {
+        // Get Group ID
+        const usersRef = collection(store, 'users');
+        const snap = query(usersRef, where('number', '==', phoneNumber));
+        const docs = await getDocs(snap);
+        docs.forEach((doc) => {
+          const { groupId, isAdmin } = doc.data();
+          dataObject.groupId = groupId;
+          dataObject.isAdmin = isAdmin;
         });
 
-        dataObject.usersList = usersList;
-        console.log('Initial/Updated users: ', dataObject);
+        const groupRef = collection(
+          store,
+          'groups',
+          dataObject.groupId,
+          'monthlyBills'
+        );
 
-        setData(dataObject);
-      });
+        const userQuery = query(
+          usersRef,
+          where('groupId', '==', dataObject.groupId)
+        );
 
-      onSnapshot(groupQuery, (snapshot) => {
-        snapshot.forEach((doc) => {
-          dataObject.monthlyBills = doc.data();
+        const groupQuery = query(groupRef);
+
+        onSnapshot(userQuery, (querySnapshot) => {
+          const usersList = [];
+          // const snapChanges = querySnapshot.docChanges();
+          querySnapshot.forEach((doc) => {
+            usersList.push({ ...doc.data(), id: doc.id });
+          });
+
+          dataObject.usersList = usersList;
+          console.log('Initial/Updated users: ', dataObject);
+
+          setData(dataObject);
         });
 
-        console.log('Initial/Updated bills: ', dataObject);
+        onSnapshot(groupQuery, (snapshot) => {
+          snapshot.forEach((doc) => {
+            dataObject.monthlyBills = doc.data();
+          });
 
-        const months = Object.keys(dataObject.monthlyBills).reduce((a, x) => {
-          const xx = { ...dataObject.monthlyBills[x], key: x };
-          a.push(xx);
-          return a;
-        }, []);
+          console.log('Initial/Updated bills: ', dataObject);
 
-        setActiveIndex(months[0].key);
-        setMonths(months);
-        setData(dataObject);
-      });
+          const months = Object.keys(dataObject.monthlyBills).reduce((a, x) => {
+            const xx = { ...dataObject.monthlyBills[x], key: x };
+            a.push(xx);
+            return a;
+          }, []);
+          if (months.length) {
+            setActiveIndex(months[0].key);
+            setMonths(months);
+          }
+          setData(dataObject);
 
+          window.sessionStorage.setItem('app_data', JSON.stringify(dataObject));
+        });
+      } catch (e) {
+        console.log('errror');
+        throw new Error(e);
+      }
       console.log('Data Object: ', dataObject);
     };
 
     document.getElementById('root').style.padding = 0;
-    document.getElementsByTagName('body')[0].style.backgroundImage = 'none';
+    document.getElementsByTagName('body')[0].style.backgroundImage =
+      'url("/src/assets/group_share.jpeg");';
 
     fetchData();
-
-    // return unsubscribe();
   }, []);
 
   const handleClick = (data) => {
@@ -154,12 +168,14 @@ const Dashboard = () => {
                       paddingAngle={2}
                       dataKey="costPerLine"
                     >
-                      {months.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
+                      {data.monthlyBills[activeIndex].details.map(
+                        (entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % 12]}
+                          />
+                        )
+                      )}
                     </Pie>
                   </PieChart>
                 ) : (

@@ -35,7 +35,7 @@ const Charges = ({ totalBill, charges = {}, numberOfLines = 1 }) => {
       />
       <br></br>
       <h4>Total</h4>
-      <KeyValueText keyValue={['Total line changes', getLineCharges()]} />
+      <KeyValueText keyValue={['Total line charges', getLineCharges()]} />
       <KeyValueText
         keyValue={['Cost per line', getLineCharges(numberOfLines)]}
         highlight="true"

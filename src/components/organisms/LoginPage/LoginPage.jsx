@@ -17,7 +17,10 @@ const LoginPage = ({ setAuthenticated }) => {
     <div className="box-form">
       <div className="left">
         <div className="overlay">
-          <h1>Bill Share</h1>
+          <h1>
+            Bill <br />
+            Share
+          </h1>
           <p>Share your mobile bills easily with your group members.</p>
         </div>
       </div>

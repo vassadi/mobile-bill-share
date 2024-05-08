@@ -84,6 +84,7 @@ const SignUp = ({ handleChange, setAuthenticated }) => {
       {!validatePhone ? (
         <>
           <p className="error-msg">{genericError}</p>
+          <p>Please fill in this form to create an account.</p>
           <form onSubmit={regiserHandler}>
             <TextField
               value={name}
@@ -125,7 +126,12 @@ const SignUp = ({ handleChange, setAuthenticated }) => {
             <br />
             <br />
 
-            <Button variant="contained" type="submit" size="medium">
+            <Button
+              className="register"
+              variant="contained"
+              type="submit"
+              size="medium"
+            >
               Register
             </Button>
           </form>
@@ -135,6 +141,7 @@ const SignUp = ({ handleChange, setAuthenticated }) => {
           setAuthenticated={setAuthenticated}
           prefilled={phoneNumber}
           successCallback={signUpUser}
+          action={'verify'}
         />
       )}
     </>

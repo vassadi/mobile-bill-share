@@ -58,6 +58,8 @@
   background-color: #fff;
   border-radius: 10px 0 0 10px !important;
   padding: 20px;
+  width: 1180px;
+  margin: 0 auto;
 }
 
 .d-flex {
@@ -68,24 +70,28 @@
   justify-content: center;
 }
 
+.alignTextCenter {
+  text-align: center;
+}
+
 .row {
   width: 100%;
 }
 
-.text-center {
-  text-align: center;
-}
-
 .signup-wrapper {
-  text-align: center;
   background: #fff;
-  padding: 25px;
   border-radius: 10px;
-  border: 1px solid #2e2e2e;
 }
 
 .mt1 {
   margin-top: 1rem;
+}
+.mt-3 {
+  margin-top: 24px;
+}
+.mr5 {
+  margin-right: 5px !important;
+  width: 70px !important;
 }
 
 .btn {
@@ -105,11 +111,6 @@
   margin-right: 5px;
 }
 
-.mr5 {
-  margin-right: 5px !important;
-  width: 70px !important;
-}
-
 div.css-qvtrhg-MuiDataGrid-virtualScroller {
   min-height: 100px;
 }
@@ -122,6 +123,9 @@ div.css-qvtrhg-MuiDataGrid-virtualScroller {
   font-weight: bold !important;
 }
 
+.register.MuiButtonBase-root {
+  background: linear-gradient(to right, #2193b0, #6dd5ed);
+}
 .headerBackground {
   background-color: rgba(224, 224, 224, 1);
 }

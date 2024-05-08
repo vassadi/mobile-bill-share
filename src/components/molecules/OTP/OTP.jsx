@@ -15,13 +15,24 @@ import {
 import 'react-phone-input-2/lib/style.css';
 import { TextField } from '@mui/material';
 
-const OTP = ({ prefilled = '', setAuthenticated, successCallback }) => {
+const OTP = ({
+  prefilled = '',
+  action = '',
+  setAuthenticated,
+  successCallback,
+}) => {
   const [otp, setOtp] = useState('');
   const [ph, setPh] = useState(prefilled);
   const [showOtp, setShowOtp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
 
+  const handlePhoneChange = ({ target }) => {
+    const value = target?.value;
+    setPhoneError(!value);
+    setPh(value);
+  };
   function onCaptchaVerify() {
     if (!window.RecaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
@@ -40,22 +51,32 @@ const OTP = ({ prefilled = '', setAuthenticated, successCallback }) => {
 
   function onSignup(event) {
     event.preventDefault();
-    setLoading(true);
-    onCaptchaVerify();
-    const appVerifier = window.recaptchaVerifier;
-    const phoneNumber = '+1' + ph;
 
-    signInWithPhoneNumber(getAuth(firebaseClientApp), phoneNumber, appVerifier)
-      .then((confirmationResult) => {
-        window.confirmationResult = confirmationResult;
-        setLoading(false);
-        setShowOtp(true);
-        toast.success('OTP Sent Sucessfully');
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error(error.message);
-      });
+    if (!ph) {
+      setPhoneError(true);
+    } else {
+      setLoading(true);
+      setPhoneError(false);
+      onCaptchaVerify();
+      const appVerifier = window.recaptchaVerifier;
+      const phoneNumber = '+1' + ph;
+
+      signInWithPhoneNumber(
+        getAuth(firebaseClientApp),
+        phoneNumber,
+        appVerifier
+      )
+        .then((confirmationResult) => {
+          window.confirmationResult = confirmationResult;
+          setLoading(false);
+          setShowOtp(true);
+          toast.success('OTP Sent Sucessfully');
+        })
+        .catch((error) => {
+          setLoading(false);
+          toast.error(error.message);
+        });
+    }
   }
 
   function onOtpverify() {
@@ -80,6 +101,9 @@ const OTP = ({ prefilled = '', setAuthenticated, successCallback }) => {
       });
   }
 
+  const headerMsg = action
+    ? 'Please verify your mobile number'
+    : 'Sign in using your mobile number';
   return (
     <div className={`d-flex justify-content-center`}>
       <Toaster toastOptions={{ duration: 4000 }} />
@@ -92,7 +116,7 @@ const OTP = ({ prefilled = '', setAuthenticated, successCallback }) => {
                 <span className="d-flex justify-content-center">
                   <BsFillShieldLockFill size={40} />
                 </span>
-                <h6 className="text-center mt-3">Enter Your OTP </h6>
+                <h6 className="alignTextCenter mt-3">Enter Your OTP </h6>
                 <OtpInput
                   value={otp}
                   onChange={setOtp}
@@ -129,19 +153,19 @@ const OTP = ({ prefilled = '', setAuthenticated, successCallback }) => {
             ) : (
               <>
                 <div className="signup-wrapper">
-                  <h6 className="text-center mt-3">
-                    Sign in using your mobile number*
-                  </h6>
+                  <h6 className="mt-3">{headerMsg}*</h6>
 
                   <TextField
                     value={ph}
+                    error={phoneError}
                     id="standard-basic5"
                     label="Mobile number"
                     variant="standard"
                     margin="dense"
                     fullWidth
-                    onChange={(e) => setPh(e.target.value)}
+                    onChange={(e) => handlePhoneChange(e)}
                     disabled={prefilled ? true : false}
+                    helperText={phoneError ? 'Phone number is required' : ''}
                   />
                   <br />
 
@@ -160,8 +184,10 @@ const OTP = ({ prefilled = '', setAuthenticated, successCallback }) => {
                     </button>
                   </div>
                   <div id="recaptcha-container" className="mt-6"></div>
+                  <p className="disclosure">
+                    *message and data rates may apply
+                  </p>
                 </div>
-                <p className="disclosure">*message and data rates may apply</p>
               </>
             )}
           </div>

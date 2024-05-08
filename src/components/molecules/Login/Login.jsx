@@ -13,9 +13,8 @@ const Login = ({ handleChange, setAuthenticated }) => {
         </a>{' '}
         it takes less than a minute.
       </p>
-      <br />
+
       <OTP setAuthenticated={setAuthenticated} />
-      <br /> <br />
     </>
   );
 };

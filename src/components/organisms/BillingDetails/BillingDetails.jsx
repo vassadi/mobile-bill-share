@@ -22,6 +22,7 @@ import {
   getChargesFromRows,
   monthYearSortComparator,
 } from '../../../utils';
+import NoBills from '../../molecules/NoBills';
 
 const initialCharges = { devices: 0, additional: 0, kickbacks: 0, credits: 0 };
 
@@ -35,13 +36,14 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
   const [mode, setMode] = useState('view');
   const [billingMonth, setBillingMonth] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(preSelectedMonth);
-  const isAdmin = data.isAdmin;
+  const { isAdmin } = data;
 
   const handleModeChange = useCallback((m) => setMode(m), []);
 
   useEffect(() => {
     setSelectedMonth(preSelectedMonth);
   }, [preSelectedMonth]);
+
   useEffect(() => {
     const months = Object.keys(data.monthlyBills);
     const key =
@@ -56,8 +58,7 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
     }
 
     setSelectedMonth(key);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedMonth]);
 
   const startAdding = () => {
     setTotalBill(0);
@@ -176,78 +177,84 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
 
   return (
     <div className="contentRoot">
-      <FlexDiv
-        align={'center'}
-        justify={'space-between'}
-        background={'#fff'}
-        padding={'15px'}
-      >
-        <FlexDiv margin={'5px'}>
-          <BillingMonthBlock
-            selectedMonth={selectedMonth}
-            mode={mode}
-            onUpdate={repaintTable}
-          />
+      {selectedMonth || mode === 'edit' ? (
+        <>
+          <FlexDiv
+            align={'center'}
+            justify={'space-between'}
+            background={'#fff'}
+            padding={'15px'}
+          >
+            <FlexDiv margin={'5px'}>
+              <BillingMonthBlock
+                selectedMonth={selectedMonth}
+                mode={mode}
+                onUpdate={repaintTable}
+              />
 
-          {isAdmin && (
-            <Button
-              className="mr5 plus-sign"
-              variant="outlined"
-              onClick={() => {
-                startAdding();
-              }}
-            >
-              <strong>+</strong>
-            </Button>
-          )}
-        </FlexDiv>
-        <div>
-          {mode === 'edit' ? (
-            <>
-              <DatePicker
-                label={'Billing moth'}
-                views={['month', 'year']}
-                value={billingMonth}
-                onChange={(newValue) => {
-                  setBillingMonth(newValue);
-                }}
-              />
-              <TextField
-                id="outlined-basic"
-                label="Total bill"
-                variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ),
-                  readOnly: !isAdmin,
-                }}
-                onBlur={({ target }) => {
-                  setTotalBill(target.value);
-                }}
-              />
-            </>
-          ) : (
-            <h2>{currencyFormatter(totalBill)}</h2>
-          )}
-        </div>
-      </FlexDiv>
-      <FlexDiv justify={'space-between'} padding={'0 0 20px 0'}>
-        <BillingTable
-          // rows={mode === 'edit' ? getRowstoAdd() : rows}
-          mode={mode}
-          selectedMonth={selectedMonth}
-          setMode={handleModeChange}
-          onSave={saveBill}
-          onCancel={cancelAdding}
-          updateCharges={updateCharges}
-        />
-        <Charges
-          totalBill={totalBill}
-          charges={charges}
-          numberOfLines={chargeableLines}
-        />
-      </FlexDiv>
+              {isAdmin && (
+                <Button
+                  className="mr5 plus-sign"
+                  variant="outlined"
+                  onClick={() => {
+                    startAdding();
+                  }}
+                >
+                  <strong>+</strong>
+                </Button>
+              )}
+            </FlexDiv>
+            <div>
+              {mode === 'edit' ? (
+                <>
+                  <DatePicker
+                    label={'Billing moth'}
+                    views={['month', 'year']}
+                    value={billingMonth}
+                    onChange={(newValue) => {
+                      setBillingMonth(newValue);
+                    }}
+                  />
+                  <TextField
+                    id="outlined-basic"
+                    label="Total bill"
+                    variant="outlined"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                      readOnly: !isAdmin,
+                    }}
+                    onBlur={({ target }) => {
+                      setTotalBill(target.value);
+                    }}
+                  />
+                </>
+              ) : (
+                <h2>{currencyFormatter(totalBill)}</h2>
+              )}
+            </div>
+          </FlexDiv>
+          <FlexDiv justify={'space-between'} padding={'0 0 20px 0'}>
+            <BillingTable
+              // rows={mode === 'edit' ? getRowstoAdd() : rows}
+              mode={mode}
+              selectedMonth={selectedMonth}
+              setMode={handleModeChange}
+              onSave={saveBill}
+              onCancel={cancelAdding}
+              updateCharges={updateCharges}
+            />
+            <Charges
+              totalBill={totalBill}
+              charges={charges}
+              numberOfLines={chargeableLines}
+            />
+          </FlexDiv>
+        </>
+      ) : (
+        <NoBills callbackAction={startAdding} />
+      )}
     </div>
   );
 };

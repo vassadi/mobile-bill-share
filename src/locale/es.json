@@ -1,0 +1,8 @@
+{
+  "translation": {
+    "headerTitle": "Bill Share",
+    "noBillsTitle": "No hay facturas disponibles",
+    "noBillsMsg": "Aún no se agregaron facturas para su grupo. Comuníquese con el administrador del grupo para obtener más información.",
+    "noBillsAdminMsg": "Aún no se agregaron facturas para su grupo. Haga clic en el botón a continuación para agregar sus facturas."
+  }
+}
