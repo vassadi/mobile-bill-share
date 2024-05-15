@@ -8,10 +8,8 @@ body {
 }
 
 .box-form {
-  margin: 20px auto;
-  width: 85%;
+  height: 100vh;
   background: #FFFFFF;
-  border-radius: 10px;
   overflow: hidden;
   display: flex;
   flex: 1 1 100%;
@@ -42,7 +40,8 @@ body {
   padding: 30px;
   width: 100%;
   height: 100%;
-  background: #5961f9ad;
+  // background: #5961f9ad;
+  background: rgba(89, 97, 249, 0.3784313725);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -71,11 +70,12 @@ body {
   margin-left: 30px;
 }
 .box-form .right {
-  width: 400px;
+  width: 450px;
   padding: 40px;
   border: 8px solid rgba(89, 97, 249, 0.6784313725);
   margin: 20px;
   border-radius: 10px;
+  background: rgba(89, 97, 249, 0.111313725)
 }
 @media (max-width: 980px) {
   .box-form .right {

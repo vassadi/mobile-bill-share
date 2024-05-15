@@ -13,7 +13,7 @@ import { collection, doc, setDoc } from 'firebase/firestore';
 
 import BillingMonthBlock from '../../atoms/BillingMonthBlock';
 
-import FlexDiv from '../../molecules/FlexDiv';
+import FlexDiv from '../../atoms/FlexDiv';
 import Charges from '../../molecules/Charges';
 import BillingTable from '../../molecules/BillingTable';
 

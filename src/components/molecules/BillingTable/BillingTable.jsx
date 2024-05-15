@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import { Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import FlexDiv from '../FlexDiv';
+import FlexDiv from '../../atoms/FlexDiv';
 import { memo, useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/userContext';
-import { monthYearSortComparator } from '../../../utils';
+import { currencyFormatter, monthYearSortComparator } from '../../../utils';
 
 const cellEditValidation = (params) => {
   if (params.hasChanged) {
@@ -16,7 +16,7 @@ const cellEditValidation = (params) => {
 const additionalColConfig = (mode) => ({
   ...(mode === 'edit' && { editable: true, cellClassName: 'headerBackground' }),
   preProcessEditCellProps: cellEditValidation,
-  valueFormatter: ({ value }) => (value ? `$ ${value}` : ''),
+  valueFormatter: ({ value }) => (value ? currencyFormatter(value) : ''),
 });
 
 const getColumnConfig = (mode) => {
@@ -46,13 +46,16 @@ const getColumnConfig = (mode) => {
     {
       field: 'credits',
       headerName: 'Credit',
-      ...(mode === 'edit' && { editable: true }),
+      ...additionalColConfig(mode),
     },
     {
       field: 'notes',
       headerName: 'Notes',
       width: 170,
-      ...(mode === 'edit' && { editable: true }),
+      ...(mode === 'edit' && {
+        editable: true,
+        cellClassName: 'headerBackground',
+      }),
     },
     {
       field: 'costPerLine',

@@ -21,7 +21,9 @@ const LoginPage = ({ setAuthenticated }) => {
             Bill <br />
             Share
           </h1>
-          <p>Share your mobile bills easily with your group members.</p>
+          <p className="fs-15">
+            Share your mobile bills easily with your group members.
+          </p>
         </div>
       </div>
 

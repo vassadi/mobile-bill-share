@@ -9,7 +9,7 @@ const Login = ({ handleChange, setAuthenticated }) => {
       <p>
         Don&apos;t have an account?{' '}
         <a href="#" onClick={() => handleChange()}>
-          Creat your account
+          Create your account
         </a>{' '}
         it takes less than a minute.
       </p>

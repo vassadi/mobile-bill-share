@@ -1,10 +1,3 @@
-#root {
-  /* max-width: 1280px; */
-  margin: 0 auto;
-  padding: 2rem;
-  /* text-align: center; */
-}
-
 .contentRoot {
   max-width: 1280px;
   margin: 0 auto;
@@ -16,9 +9,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -68,6 +63,7 @@
 
 .justify-content-center {
   justify-content: center;
+  align-items: center;
 }
 
 .alignTextCenter {
@@ -79,8 +75,11 @@
 }
 
 .signup-wrapper {
-  background: #fff;
   border-radius: 10px;
+}
+
+#recaptcha-container {
+  height: 80px;
 }
 
 .mt1 {
@@ -96,7 +95,6 @@
 
 .btn {
   color: #fff;
-  background: linear-gradient(to right, #2193b0, #6dd5ed);
   margin-bottom: 2rem;
 }
 
@@ -123,11 +121,15 @@ div.css-qvtrhg-MuiDataGrid-virtualScroller {
   font-weight: bold !important;
 }
 
-.register.MuiButtonBase-root {
-  background: linear-gradient(to right, #2193b0, #6dd5ed);
+.register.MuiButtonBase-root,
+.btn {
+  /* background: linear-gradient(to right, #2193b0, #6dd5ed); */
+  background: rgba(89, 97, 249, 0.6784313725);
+  font-weight: bold;
 }
+
 .headerBackground {
-  background-color: rgba(224, 224, 224, 1);
+  background-color: rgba(255, 255, 224, 0.55);
 }
 
 .recharts-responsive-container {
@@ -138,4 +140,8 @@ div.css-qvtrhg-MuiDataGrid-virtualScroller {
 
 .recharts-responsive-container:last-child {
   margin-left: 10px;
+}
+
+.fs-15 {
+  font-size: 1.5rem;
 }

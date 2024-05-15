@@ -1,6 +1,8 @@
 {
   "translation": {
     "headerTitle": "Bill Share",
+    "welcomeMessage": "Here are the monthly billing details of your group.",
+    "newUserWelcomeMessage": "Welcome to your own group.",
     "noBillsTitle": "No bills available",
     "noBillsMsg": "No bills were added for your group yet. Please contact group admin for more information.",
     "noBillsAdminMsg": "No bills were added for your group yet. Please click below button to add your bills."

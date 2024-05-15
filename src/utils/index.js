@@ -61,3 +61,10 @@ export const getChargesFromRows = (rows, initialCharges) => {
 
   return charges;
 };
+
+export const getUserInfo = () => {
+  const userSession = sessionStorage.getItem('userInfo');
+  const userInfo = userSession ? JSON.parse(userSession) : {};
+
+  return userInfo;
+};

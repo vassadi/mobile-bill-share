@@ -15,14 +15,20 @@ import {
 import AdminModule from '../../organisms/AdminModule/AdminModule';
 import { deepOrange } from '@mui/material/colors';
 import { Logout, Settings } from '@mui/icons-material';
-import FlexDiv from '../FlexDiv';
+import FlexDiv from '../../atoms/FlexDiv';
 import { useTranslation } from 'react-i18next';
 import { ACCESS_TOKEN } from '../../../constants';
+import { getAuth, signOut } from 'firebase/auth';
 
 const StyledDiv = styled.div`
   display: flex;
   justify-content: space-between;
   background-color: #fff;
+`;
+const RestyledDiv = styled(StyledDiv)`
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
 `;
 
 const Header = () => {
@@ -51,38 +57,49 @@ const Header = () => {
     if (item === 'users') {
       setShowUsers(true);
     } else if (item === 'logout') {
-      sessionStorage.removeItem(ACCESS_TOKEN);
-      window.location.reload();
+      const auth = getAuth();
+      signOut(auth)
+        .then(() => {
+          console.log('logoff successful');
+          sessionStorage.removeItem(ACCESS_TOKEN);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else if (item === 'theme') {
+      console.log('Theme clicked');
     }
   };
 
   return (
     <StyledDiv>
-      <h1>Bill Share</h1>
+      <RestyledDiv>
+        <h1>Bill Share</h1>
 
-      <FlexDiv align={'center'}>
-        <FormControl size="small1" sx={{ mr: '20px', minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-label">Language</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={currentLanguage}
-            label="Language"
-            onChange={handleChangeLanguage}
-          >
-            <MenuItem value={'en'}>English</MenuItem>
-            <MenuItem value={'es'}>Español</MenuItem>
-            <MenuItem value={'te'}>తెలుగు</MenuItem>
-            <MenuItem value={'hi'}>हिंदी</MenuItem>
-          </Select>
-        </FormControl>
-        <IconButton aria-label="settings" size="small" onClick={handleClick}>
-          <Avatar sx={{ bgcolor: deepOrange[500], width: 52, height: 52 }}>
-            S
-          </Avatar>
-        </IconButton>
-      </FlexDiv>
-
+        <FlexDiv align={'space-between'}>
+          <FormControl size="small1" sx={{ mr: '20px', minWidth: 120 }}>
+            <InputLabel id="demo-simple-select-label">Language</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={currentLanguage}
+              label="Language"
+              onChange={handleChangeLanguage}
+            >
+              <MenuItem value={'en'}>English</MenuItem>
+              <MenuItem value={'es'}>Español</MenuItem>
+              <MenuItem value={'te'}>తెలుగు</MenuItem>
+              <MenuItem value={'hi'}>हिंदी</MenuItem>
+            </Select>
+          </FormControl>
+          <IconButton aria-label="settings" size="small" onClick={handleClick}>
+            <Avatar sx={{ bgcolor: deepOrange[500], width: 52, height: 52 }}>
+              S
+            </Avatar>
+          </IconButton>
+        </FlexDiv>
+      </RestyledDiv>
       {showUsers && <AdminModule open={showUsers} handleClose={handleClose} />}
 
       <Menu
@@ -92,11 +109,11 @@ const Header = () => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleClose()}>
+        <MenuItem onClick={() => handleClose('theme')}>
           <ListItemIcon>
             <Avatar sx={{ width: 24, height: 24 }} />
           </ListItemIcon>
-          Profile
+          Theme
         </MenuItem>
 
         <MenuItem onClick={() => handleClose('users')}>

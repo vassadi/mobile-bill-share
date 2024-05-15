@@ -2,8 +2,9 @@
 import { Button, TextField } from '@mui/material';
 import { useState } from 'react';
 import { store } from '../../../config/getClientConfig';
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import OTP from '../OTP';
+import { isUserAvailable } from '../../../api';
 
 const SignUp = ({ handleChange, setAuthenticated }) => {
   const [name, setName] = useState('');
@@ -57,15 +58,12 @@ const SignUp = ({ handleChange, setAuthenticated }) => {
     } else {
       console.log('Submitting..');
 
-      const usersRef = collection(store, 'users');
+      const isNewUser = await isUserAvailable(phoneNumber);
 
-      const snap = query(usersRef, where('number', '==', phoneNumber));
-      const docs = await getDocs(snap);
-
-      if (docs.empty) {
+      if (isNewUser) {
         setValidatePhone(true);
       } else {
-        setGenericError('User already existed.');
+        setGenericError('User with this number is already registered.');
       }
     }
   };

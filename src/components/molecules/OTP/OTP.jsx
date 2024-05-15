@@ -5,6 +5,7 @@ import OtpInput from 'react-otp-input';
 // import PhoneInput from 'react-phone-input-2';
 import { Toaster, toast } from 'react-hot-toast';
 import { BsFillShieldLockFill } from 'react-icons/bs';
+import { CgSpinner } from 'react-icons/cg';
 import { auth, firebaseClientApp } from '../../../config/getClientConfig';
 import {
   RecaptchaVerifier,
@@ -12,8 +13,8 @@ import {
   signInWithPhoneNumber,
 } from 'firebase/auth';
 
-import 'react-phone-input-2/lib/style.css';
 import { TextField } from '@mui/material';
+import { isUserAvailable } from '../../../api';
 
 const OTP = ({
   prefilled = '',
@@ -27,57 +28,70 @@ const OTP = ({
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
+  const [otpError, setOtpError] = useState(false);
 
   const handlePhoneChange = ({ target }) => {
     const value = target?.value;
     setPhoneError(!value);
     setPh(value);
   };
+
   function onCaptchaVerify() {
-    if (!window.RecaptchaVerifier) {
+    if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
         'recaptcha-container',
         {
-          size: 'normal',
-          callback: () => {
-            onSignup();
-          },
+          size: 'invisible',
+          // callback: () => {
+          //   onLogin();
+          // },
           'expired-callback': () => {},
         }
       );
     }
   }
 
-  function onSignup(event) {
-    event.preventDefault();
+  const onLogin = async (event) => {
+    if (event) {
+      event.preventDefault();
+    }
 
     if (!ph) {
       setPhoneError(true);
     } else {
       setLoading(true);
-      setPhoneError(false);
-      onCaptchaVerify();
-      const appVerifier = window.recaptchaVerifier;
-      const phoneNumber = '+1' + ph;
+      const isEmpty = await isUserAvailable(ph);
 
-      signInWithPhoneNumber(
-        getAuth(firebaseClientApp),
-        phoneNumber,
-        appVerifier
-      )
-        .then((confirmationResult) => {
-          window.confirmationResult = confirmationResult;
-          setLoading(false);
-          setShowOtp(true);
-          toast.success('OTP Sent Sucessfully');
-        })
-        .catch((error) => {
-          setLoading(false);
-          toast.error(error.message);
-        });
+      console.log(isEmpty);
+      if (action !== 'verify' && isEmpty) {
+        setOtpError('User is not registered yet. Please create your account');
+        setLoading(false);
+      } else {
+        setPhoneError(false);
+        setOtpError(false);
+        onCaptchaVerify();
+        const appVerifier = window.recaptchaVerifier;
+        const phoneNumber = '+1' + ph;
+        signInWithPhoneNumber(
+          getAuth(firebaseClientApp),
+          phoneNumber,
+          appVerifier
+        )
+          .then((confirmationResult) => {
+            window.confirmationResult = confirmationResult;
+            setLoading(false);
+            setShowOtp(true);
+            toast.success('OTP Sent Sucessfully');
+          })
+          .catch((e) => {
+            setLoading(false);
+            setOtpError(e.message);
+          });
+        window.recaptchaVerifier = null;
+      }
     }
-  }
+  };
 
   function onOtpverify() {
     window.confirmationResult
@@ -97,7 +111,7 @@ const OTP = ({
       })
       .catch((error) => {
         console.log(error.message);
-        toast.error(error.message);
+        setOtpError('The OTP you entered is not valid.');
       });
   }
 
@@ -113,28 +127,32 @@ const OTP = ({
           <div className="signuppage mt-5 bg-dark text-white p-5 ">
             {showOtp ? (
               <div className="optvarificationcontent">
+                <p className="error-msg">{otpError}</p>
                 <span className="d-flex justify-content-center">
                   <BsFillShieldLockFill size={40} />
                 </span>
                 <h6 className="alignTextCenter mt-3">Enter Your OTP </h6>
-                <OtpInput
-                  value={otp}
-                  onChange={setOtp}
-                  numInputs={6}
-                  shouldAutoFocus
-                  renderInput={(props) => (
-                    <input
-                      {...props}
-                      style={{
-                        width: '35px',
-                        height: '35px',
-                        marginRight: '12px',
-                        textAlign: 'center',
-                        fontSize: '16px',
-                      }}
-                    />
-                  )}
-                ></OtpInput>
+                <div className="d-flex justify-content-center">
+                  <OtpInput
+                    className="justify-content-center"
+                    value={otp}
+                    onChange={setOtp}
+                    numInputs={6}
+                    shouldAutoFocus
+                    renderInput={(props) => (
+                      <input
+                        {...props}
+                        style={{
+                          width: '35px',
+                          height: '35px',
+                          marginRight: '12px',
+                          textAlign: 'center',
+                          fontSize: '16px',
+                        }}
+                      />
+                    )}
+                  ></OtpInput>
+                </div>
                 <div className="d-flex justify-content-center">
                   <button
                     className="btn btn-primary mt-3 w-75 "
@@ -153,8 +171,8 @@ const OTP = ({
             ) : (
               <>
                 <div className="signup-wrapper">
+                  <p className="error-msg">{otpError}</p>
                   <h6 className="mt-3">{headerMsg}*</h6>
-
                   <TextField
                     value={ph}
                     error={phoneError}
@@ -172,15 +190,12 @@ const OTP = ({
                   <div className="d-flex justify-content-center">
                     <button
                       className="btn btn-primary mt1 w-75 "
-                      onClick={onSignup}
+                      onClick={onLogin}
                     >
                       {loading && (
-                        <span
-                          className="spinner-border spinner-border-sm"
-                          style={{ marginRight: '10px' }}
-                        ></span>
+                        <CgSpinner size={20} className="mt-1 animate-spin" />
                       )}
-                      <span>Send OTP Via SMS</span>
+                      <span>Send OTP via SMS</span>
                     </button>
                   </div>
                   <div id="recaptcha-container" className="mt-6"></div>
