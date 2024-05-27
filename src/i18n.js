@@ -12,5 +12,5 @@ i18n.use(initReactI18next).init({
     te: { ...teJSON },
     hi: { ...hiJSON },
   },
-  lng: 'te',
+  lng: 'en',
 });

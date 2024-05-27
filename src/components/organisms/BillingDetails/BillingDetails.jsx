@@ -137,9 +137,10 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
           +(row.credits || 0);
 
         if (isFixed) {
-          row.costPerLine = +additionalCharge.toFixed(2);
+          row.totalCostPerLine = +additionalCharge.toFixed(2);
         } else {
-          row.costPerLine = +(lineCost + additionalCharge).toFixed(2);
+          row.totalCostPerLine = +(lineCost + additionalCharge).toFixed(2);
+          row.lineCost = +lineCost.toFixed(2);
         }
       });
 
@@ -235,7 +236,8 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
               )}
             </div>
           </FlexDiv>
-          <FlexDiv justify={'space-between'} padding={'0 0 20px 0'}>
+
+          <div className="flex gap-3 m-5">
             <BillingTable
               // rows={mode === 'edit' ? getRowstoAdd() : rows}
               mode={mode}
@@ -250,7 +252,7 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
               charges={charges}
               numberOfLines={chargeableLines}
             />
-          </FlexDiv>
+          </div>
         </>
       ) : (
         <NoBills callbackAction={startAdding} />

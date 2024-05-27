@@ -70,8 +70,8 @@ const SignUp = ({ handleChange, setAuthenticated }) => {
 
   return (
     <>
-      <h5>Signup</h5>
-      <p>
+      <h2 className="text-6xl leading-loose mb-8">Signup</h2>
+      <p className="mb-5">
         Are you a returning user? If so, you can{' '}
         <a href="#" onClick={() => handleChange()}>
           access your account
@@ -81,8 +81,8 @@ const SignUp = ({ handleChange, setAuthenticated }) => {
 
       {!validatePhone ? (
         <>
-          <p className="error-msg">{genericError}</p>
-          <p>Please fill in this form to create an account.</p>
+          <p className="mb-5 error-msg">{genericError}</p>
+          <p className="mb-5">Please fill in this form to create an account.</p>
           <form onSubmit={regiserHandler}>
             <TextField
               value={name}
@@ -124,14 +124,16 @@ const SignUp = ({ handleChange, setAuthenticated }) => {
             <br />
             <br />
 
-            <Button
-              className="register"
-              variant="contained"
-              type="submit"
-              size="medium"
-            >
-              Register
-            </Button>
+            <div className="mt-8 text-center">
+              <Button
+                className="register"
+                variant="contained"
+                type="submit"
+                size="medium"
+              >
+                Register
+              </Button>
+            </div>
           </form>
         </>
       ) : (

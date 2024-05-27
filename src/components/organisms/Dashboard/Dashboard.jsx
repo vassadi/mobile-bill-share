@@ -25,14 +25,22 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import Header from '../../molecules/Header';
-import { getUserInfo, monthYearSortComparator } from '../../../utils';
+import {
+  currencyFormatter,
+  getUserInfo,
+  monthYearSortComparator,
+} from '../../../utils';
 
 import { useTranslation } from 'react-i18next';
+import { MobileBrick, WebBrick } from '../../atoms/Bricks';
+import KeyValueText from '../../atoms/KeyValueText/KeyValueText';
+import StyledDiv from '../../atoms/StyledDiv/StyledDiv';
 
 const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState();
   const [data, setData] = useState('');
   const [months, setMonths] = useState([]);
+  const [chunkDetails, setChunkDetails] = useState('');
 
   const { t } = useTranslation();
 
@@ -134,6 +142,10 @@ const Dashboard = () => {
     setActiveIndex(data.key);
   };
 
+  const handlePieClick = (data) => {
+    setChunkDetails(data.payload.payload);
+  };
+
   if (!data) return null;
 
   return (
@@ -149,8 +161,8 @@ const Dashboard = () => {
                   <p>{t('welcomeMessage')}</p>
                 </div>
               </FlexDiv>
-              <FlexDiv>
-                <ResponsiveContainer width="70%" height={300}>
+              <div className="flex flex-col gap-3 md:flex-row m-5">
+                <ResponsiveContainer height={300} className={'basis-3/4'}>
                   <BarChart data={months}>
                     <XAxis dataKey="key" />
                     <YAxis />
@@ -173,18 +185,19 @@ const Dashboard = () => {
                   </BarChart>
                 </ResponsiveContainer>
 
-                <ResponsiveContainer width="30%" height={300}>
+                <ResponsiveContainer height={300} className={'basis-1/4'}>
                   {activeIndex ? (
                     <PieChart>
                       <Tooltip />
                       <Pie
+                        onClick={handlePieClick}
                         data={data.monthlyBills[activeIndex].details}
                         cx={'50%'}
                         cy={'50%'}
                         outerRadius={120}
                         fill="#8884d8"
                         paddingAngle={2}
-                        dataKey="costPerLine"
+                        dataKey="totalCostPerLine"
                       >
                         {data.monthlyBills[activeIndex].details.map(
                           (entry, index) => (
@@ -200,13 +213,68 @@ const Dashboard = () => {
                     <div> Plese select graph to see the individual bill.</div>
                   )}
                 </ResponsiveContainer>
-              </FlexDiv>
+              </div>
             </>
           )}
-          <BillingDetails
-            preSelectedMonth={activeIndex}
-            handleSelectedMonthChange={(x) => setActiveIndex(x)}
-          />
+          <WebBrick>
+            <BillingDetails
+              preSelectedMonth={activeIndex}
+              handleSelectedMonthChange={(x) => setActiveIndex(x)}
+            />
+          </WebBrick>
+          <MobileBrick>
+            {Object.keys(chunkDetails).length > 0 && (
+              <StyledDiv background={'#fff'}>
+                <h4 className="font-bold py-2.5">Charges</h4>
+                <KeyValueText keyValue={['Name', chunkDetails?.name]} />
+                <KeyValueText
+                  keyValue={[
+                    'Line cost',
+                    currencyFormatter(chunkDetails?.lineCost || 0),
+                  ]}
+                />
+                <KeyValueText
+                  keyValue={[
+                    'Device charges',
+                    currencyFormatter(chunkDetails?.devices || 0),
+                  ]}
+                />
+                <KeyValueText
+                  keyValue={[
+                    'Additoanl charges',
+                    currencyFormatter(chunkDetails?.additional || 0),
+                  ]}
+                />
+
+                <KeyValueText
+                  keyValue={[
+                    'Kickbacks',
+                    currencyFormatter(chunkDetails?.kickbacks || 0),
+                  ]}
+                />
+                <KeyValueText
+                  keyValue={[
+                    'Credits',
+                    currencyFormatter(chunkDetails?.credits || 0),
+                  ]}
+                />
+                <br></br>
+
+                <KeyValueText
+                  keyValue={[
+                    'Total line charges',
+                    currencyFormatter(chunkDetails?.totalCostPerLine || 0),
+                  ]}
+                  highlight="true"
+                />
+              </StyledDiv>
+            )}
+          </MobileBrick>
+          <MobileBrick>
+            <FlexDiv background={'#fff'} justify={'center'}>
+              Thank You!
+            </FlexDiv>
+          </MobileBrick>
         </div>
       </LocalizationProvider>
     </UserContextProvider>

@@ -11,15 +11,9 @@ function App() {
   const [isAuthenticated, setAuthenticated] = useState(false);
   const userSession = sessionStorage.getItem(ACCESS_TOKEN);
 
-  const themeSwitch = () => {
-    document.body.classList.toggle('billVariant');
-  };
   console.log('***  APP  ***');
   return (
     <>
-      <button className="themeSwitcher" onClick={themeSwitch}>
-        &#x2022;
-      </button>
       {isAuthenticated || userSession ? (
         <ErrorBoundary>
           <Dashboard />

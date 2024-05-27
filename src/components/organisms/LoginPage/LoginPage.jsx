@@ -14,14 +14,14 @@ const LoginPage = ({ setAuthenticated }) => {
   };
 
   return (
-    <div className="box-form">
+    <div className="min-h-dvh box-form">
       <div className="left">
         <div className="overlay">
           <h1>
             Bill <br />
             Share
           </h1>
-          <p className="fs-15">
+          <p className="text-2xl">
             Share your mobile bills easily with your group members.
           </p>
         </div>

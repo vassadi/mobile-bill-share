@@ -86,7 +86,10 @@ const OTP = ({
           })
           .catch((e) => {
             setLoading(false);
-            setOtpError(e.message);
+            const message = e.message.includes('invalid-phone-number')
+              ? 'Please enter valid phone number.'
+              : e.message;
+            setOtpError(message);
           });
         window.recaptchaVerifier = null;
       }
@@ -119,96 +122,108 @@ const OTP = ({
     ? 'Please verify your mobile number'
     : 'Sign in using your mobile number';
   return (
-    <div className={`d-flex justify-content-center`}>
+    <div className={`flex justify-center items-center`}>
       <Toaster toastOptions={{ duration: 4000 }} />
       {/* <img src={bgimg} alt="bgimg" className={` ${Style.loginimg}`} /> */}
       {!user ? (
-        <div className={`row position-absolute mt-5  `}>
-          <div className="signuppage mt-5 bg-dark text-white p-5 ">
-            {showOtp ? (
-              <div className="optvarificationcontent">
-                <p className="error-msg">{otpError}</p>
-                <span className="d-flex justify-content-center">
-                  <BsFillShieldLockFill size={40} />
-                </span>
-                <h6 className="alignTextCenter mt-3">Enter Your OTP </h6>
-                <div className="d-flex justify-content-center">
-                  <OtpInput
-                    className="justify-content-center"
-                    value={otp}
-                    onChange={setOtp}
-                    numInputs={6}
-                    shouldAutoFocus
-                    renderInput={(props) => (
-                      <input
-                        {...props}
-                        style={{
-                          width: '35px',
-                          height: '35px',
-                          marginRight: '12px',
-                          textAlign: 'center',
-                          fontSize: '16px',
-                        }}
-                      />
-                    )}
-                  ></OtpInput>
-                </div>
-                <div className="d-flex justify-content-center">
-                  <button
-                    className="btn btn-primary mt-3 w-75 "
-                    onClick={onOtpverify}
-                  >
-                    {loading && (
-                      <span
-                        className="spinner-border spinner-border-sm"
-                        style={{ marginRight: '10px' }}
-                      ></span>
-                    )}
-                    <span> Verify OTP</span>
-                  </button>
-                </div>
+        <div className="signuppage">
+          {showOtp ? (
+            <div className="optvarificationcontent">
+              <p className="error-msg mb-5">{otpError}</p>
+              <span className="flex justify-center items-center">
+                <BsFillShieldLockFill size={40} />
+              </span>
+              <p className="text-center mt-3 mb-8">Enter Your OTP </p>
+              <div className="grid grid-cols-6 gap-4 mb-5">
+                <OtpInput
+                  className="mb-8"
+                  value={otp}
+                  onChange={setOtp}
+                  numInputs={6}
+                  shouldAutoFocus
+                  renderInput={(props) => (
+                    <input
+                      {...props}
+                      style={{
+                        width: '35px',
+                        height: '35px',
+                        marginRight: '12px',
+                        textAlign: 'center',
+                        fontSize: '16px',
+                        border: '1px solid #ccc',
+                        borderRadius: '5px',
+                      }}
+                    />
+                  )}
+                ></OtpInput>
               </div>
-            ) : (
-              <>
-                <div className="signup-wrapper">
-                  <p className="error-msg">{otpError}</p>
-                  <h6 className="mt-3">{headerMsg}*</h6>
-                  <TextField
-                    value={ph}
-                    error={phoneError}
-                    id="standard-basic5"
-                    label="Mobile number"
-                    variant="standard"
-                    margin="dense"
-                    fullWidth
-                    onChange={(e) => handlePhoneChange(e)}
-                    disabled={prefilled ? true : false}
-                    helperText={phoneError ? 'Phone number is required' : ''}
-                  />
-                  <br />
+              <div className="flex justify-center items-center">
+                <button
+                  className="btn btn-primary mt-3 w-75 "
+                  onClick={onOtpverify}
+                >
+                  {loading && (
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      style={{ marginRight: '10px' }}
+                    ></span>
+                  )}
+                  <span> Verify OTP</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="signup-wrapper">
+                <p className="error-msg mb-5">{otpError}</p>
+                <p className="mt-3 mb-8">{headerMsg}*</p>
+                <TextField
+                  value={ph}
+                  error={phoneError}
+                  id="standard-basic5"
+                  label="Mobile number"
+                  variant="standard"
+                  margin="dense"
+                  fullWidth
+                  onChange={(e) => handlePhoneChange(e)}
+                  disabled={prefilled ? true : false}
+                  helperText={phoneError ? 'Phone number is required' : ''}
+                />
+                <br />
 
-                  <div className="d-flex justify-content-center">
-                    <button
-                      className="btn btn-primary mt1 w-75 "
-                      onClick={onLogin}
-                    >
+                <div className="flex justify-center items-center mt-5">
+                  <button
+                    className="btn btn-primary mt1 w-75 "
+                    onClick={onLogin}
+                  >
+                    <div className="flex">
                       {loading && (
-                        <CgSpinner size={20} className="mt-1 animate-spin" />
+                        <span className="mr-2">
+                          <CgSpinner size={20} className="mt-1 animate-spin" />
+                        </span>
                       )}
                       <span>Send OTP via SMS</span>
-                    </button>
-                  </div>
-                  <div id="recaptcha-container" className="mt-6"></div>
-                  <p className="disclosure">
-                    *message and data rates may apply
-                  </p>
+                    </div>
+                  </button>
+
+                  {/* <LoadingButton
+                      size="large"
+                      onClick={onLogin}
+                      loading={loading}
+                      loadingPosition="start"
+                      variant="contained"
+                    >
+                      <span>Send OTP via SMS</span>
+                    </LoadingButton> */}
                 </div>
-              </>
-            )}
-          </div>
+                <div id="recaptcha-container" className="mt-6"></div>
+                <p className="disclosure">*message and data rates may apply</p>
+              </div>
+            </>
+          )}
         </div>
       ) : (
-        <div className=" row position-absolute  text-white p-5">
+        <div className=" row position-absolute p-5">
           <p style={{ marginTop: '70%' }}>Login Sucessfully</p>
         </div>
       )}

@@ -45,7 +45,7 @@ const NoBills = ({ callbackAction }) => {
           )}
         </div>
       </StyledDiv> */}
-      <FlexDiv justify={'center'} margin={'2rem'}>
+      <FlexDiv justify={'center'} margin={'20px'}>
         <Card sx={{ minWidth: 275, borderRadius: 2.5 }}>
           <CardContent>
             <Typography

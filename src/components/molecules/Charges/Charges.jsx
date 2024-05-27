@@ -3,7 +3,7 @@ import { currencyFormatter } from '../../../utils';
 import KeyValueText from '../../atoms/KeyValueText/KeyValueText';
 
 const Charges = ({ totalBill, charges = {}, numberOfLines = 1 }) => {
-  console.log('***  Charges  ***', charges);
+  console.log('***  Charges  ***');
 
   const getLineCharges = (number = 1) => {
     return currencyFormatter(
@@ -17,8 +17,8 @@ const Charges = ({ totalBill, charges = {}, numberOfLines = 1 }) => {
   };
 
   return (
-    <div className="calculator">
-      <h4>Charges</h4>
+    <div className="calculator basis-1/4">
+      <h4 className="font-bold py-2.5">Charges</h4>
       <KeyValueText
         keyValue={['Device charges', currencyFormatter(charges.devices)]}
       />
@@ -26,7 +26,7 @@ const Charges = ({ totalBill, charges = {}, numberOfLines = 1 }) => {
         keyValue={['Additoanl charges', currencyFormatter(charges.additional)]}
       />
 
-      <h4>Credits</h4>
+      <h4 className="font-bold py-2.5">Credits</h4>
       <KeyValueText
         keyValue={['Kickbacks', currencyFormatter(charges.kickbacks)]}
       />
@@ -34,7 +34,7 @@ const Charges = ({ totalBill, charges = {}, numberOfLines = 1 }) => {
         keyValue={['Credits', currencyFormatter(charges.credits)]}
       />
       <br></br>
-      <h4>Total</h4>
+      <h4 className="font-bold py-2.5">Total</h4>
       <KeyValueText keyValue={['Total line charges', getLineCharges()]} />
       <KeyValueText
         keyValue={['Cost per line', getLineCharges(numberOfLines)]}

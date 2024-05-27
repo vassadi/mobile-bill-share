@@ -22,12 +22,14 @@ import { getAuth, signOut } from 'firebase/auth';
 
 const StyledDiv = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
   background-color: #fff;
 `;
 const RestyledDiv = styled(StyledDiv)`
   width: 100%;
   max-width: 1280px;
+  padding: 0 20px;
   margin: 0 auto;
 `;
 
@@ -69,15 +71,16 @@ const Header = () => {
         });
     } else if (item === 'theme') {
       console.log('Theme clicked');
+      document.body.classList.toggle('billVariant');
     }
   };
 
   return (
     <StyledDiv>
       <RestyledDiv>
-        <h1>Bill Share</h1>
+        <h1 className="text-5xl font-bold">Bill Share</h1>
 
-        <FlexDiv align={'space-between'}>
+        <FlexDiv align={'center'} margin={'20px 0'}>
           <FormControl size="small1" sx={{ mr: '20px', minWidth: 120 }}>
             <InputLabel id="demo-simple-select-label">Language</InputLabel>
             <Select

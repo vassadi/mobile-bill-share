@@ -1,10 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+
   background-color: #242424;
 
   font-synthesis: none;
@@ -22,17 +26,8 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  /* display: flex;
-  place-items: center; */
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #c4cfff;
-}
-
 body.billVariant {
-  background-image: linear-gradient(135deg, #fb8 10%, #fb6222 100%);
+  background-image: linear-gradient(90deg, #fb8 10%, #fb6222 100%);
 }
 
 body.billVariant .box-form .right {
@@ -45,6 +40,7 @@ body.billVariant .box-form .left .overlay {
 }
 
 body.billVariant .register.MuiButtonBase-root,
+body.billVariant .MuiLoadingButton-root,
 body.billVariant .btn {
   background: linear-gradient(to right, #fa8, #cd0a27);
 }
@@ -119,17 +115,4 @@ button:focus-visible {
   position: absolute;
   top: 5px;
   right: 5px;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }

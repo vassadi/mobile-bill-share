@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import FlexDiv from '../../atoms/FlexDiv';
 import { memo, useContext, useEffect, useState } from 'react';
@@ -19,14 +19,29 @@ const additionalColConfig = (mode) => ({
   valueFormatter: ({ value }) => (value ? currencyFormatter(value) : ''),
 });
 
-const getColumnConfig = (mode) => {
+const getColumnConfig = (mode, usersList) => {
+  const getNameCell = ({ row }) => {
+    const [user] = usersList.filter((x) => x.id === row.id);
+
+    return mode === 'edit' ? (
+      <div>
+        <Typography>{row.name}</Typography>
+        <Typography sx={{ fontSize: '10px' }}>{user.number}</Typography>
+      </div>
+    ) : (
+      <div>
+        <Typography title={`${user.number}`}>{row.name}</Typography>
+      </div>
+    );
+  };
+
   const columns = [
     {
       field: 'name',
       headerName: 'Name',
       width: 170,
-      // headerClassName: 'headerBackground',
-      // cellClassName: 'headerBackground',
+
+      renderCell: getNameCell,
     },
     {
       field: 'devices',
@@ -51,23 +66,34 @@ const getColumnConfig = (mode) => {
     {
       field: 'notes',
       headerName: 'Notes',
-      width: 170,
       ...(mode === 'edit' && {
         editable: true,
         cellClassName: 'headerBackground',
       }),
     },
-    {
-      field: 'costPerLine',
-      headerName: 'Individual price',
-      width: 150,
-      valueFormatter: ({ value }) => (value ? `$ ${value}` : ''),
-    },
   ];
 
-  columns.map((c) => {
-    c.headerClassName = 'headerBackground1';
-  });
+  if (mode !== 'edit') {
+    columns.splice(1, 0, {
+      field: 'lineCost',
+      headerName: 'Line Cost',
+      valueFormatter: ({ value }) => (value ? `$ ${value}` : ''),
+      valueGetter: (row) => {
+        const [user] = usersList.filter((x) => x.id === row.id);
+        return user?.isFixed ? null : row.value;
+      },
+      cellClassName: 'disabledColor',
+    });
+
+    columns.push({
+      field: 'totalCostPerLine',
+      headerName: 'Individual price',
+      width: 100,
+      valueFormatter: ({ value }) => (value ? currencyFormatter(value) : ''),
+      cellClassName: 'justifyEnd',
+    });
+  }
+
   return columns;
 };
 
@@ -123,7 +149,7 @@ const BillingTable = ({
     </FlexDiv>
   );
 
-  const columns = getColumnConfig(mode);
+  const columns = getColumnConfig(mode, usersList);
   const slots = { footer: getFooter };
   const initialState = {
     pagination: { paginationModel: { pageSize: 25 } },
@@ -146,11 +172,11 @@ const BillingTable = ({
 
   return (
     <DataGrid
-      className="data-grid"
+      className="data-grid basis-3/4"
       rows={updatedRows}
       columns={columns}
-      rowHeight={35}
-      pageSizeOptions={[25, 50, 75, 100]}
+      rowHeight={mode === 'edit' ? 55 : 45}
+      pageSizeOptions={[]}
       initialState={initialState}
       sx={{
         '& .MuiDataGrid-columnHeaderTitle': {
