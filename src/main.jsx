@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client';
 
-import './i18n.js';
-import App from './App.jsx';
+import './i18n';
+import App from './App';
 
 import './index.css';
 
