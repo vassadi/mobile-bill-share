@@ -23,6 +23,7 @@ import { collection, deleteDoc, doc, setDoc } from 'firebase/firestore';
 import { store } from '../../../config/getClientConfig';
 import { UserContext } from '../../../context/userContext';
 import { phoneFormatter } from '../../../utils';
+import { MobileBrick, WebBrick } from '../../atoms/Bricks';
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -272,30 +273,56 @@ const AdminModule = ({ open, handleClose }) => {
           </Toolbar>
         </AppBar>
 
-        <DataGrid
-          className="data-grid"
-          initialState={{
-            columns: {
-              columnVisibilityModel: {
-                groupId: false,
+        <WebBrick>
+          <DataGrid
+            className="data-grid"
+            initialState={{
+              columns: {
+                columnVisibilityModel: {
+                  groupId: false,
+                },
               },
-            },
-          }}
-          columns={tcolumns}
-          rows={rows}
-          editMode="row"
-          rowModesModel={rowModesModel}
-          onRowModesModelChange={handleRowModesModelChange}
-          onRowEditStop={handleRowEditStop}
-          processRowUpdate={(newRow) => processRowUpdate(newRow, groupId)}
-          onProcessRowUpdateError={(error) => {
-            console.log(error);
-          }}
-          slots={isAdmin ? { toolbar: EditToolbar } : {}}
-          slotProps={{
-            toolbar: { setRows, setRowModesModel },
-          }}
-        />
+            }}
+            columns={tcolumns}
+            rows={rows}
+            editMode="row"
+            rowModesModel={rowModesModel}
+            onRowModesModelChange={handleRowModesModelChange}
+            onRowEditStop={handleRowEditStop}
+            processRowUpdate={(newRow) => processRowUpdate(newRow, groupId)}
+            onProcessRowUpdateError={(error) => {
+              console.log(error);
+            }}
+            slots={isAdmin ? { toolbar: EditToolbar } : {}}
+            slotProps={{
+              toolbar: { setRows, setRowModesModel },
+            }}
+          />
+        </WebBrick>
+        <MobileBrick>
+          <DataGrid
+            className="data-grid"
+            initialState={{
+              columns: {
+                columnVisibilityModel: {
+                  groupId: false,
+                },
+              },
+            }}
+            columns={[
+              { field: 'groupId', headerName: 'Group ID' },
+              { field: 'name', headerName: 'Name', width: 175, editable: true },
+              {
+                field: 'number',
+                headerName: 'Mobile',
+                width: 150,
+                editable: true,
+                valueFormatter: ({ value }) => phoneFormatter(value),
+              },
+            ]}
+            rows={rows}
+          />
+        </MobileBrick>
       </Dialog>
     </>
   );

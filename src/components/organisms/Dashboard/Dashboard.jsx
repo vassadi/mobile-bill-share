@@ -216,12 +216,12 @@ const Dashboard = () => {
               </div>
             </>
           )}
-          <WebBrick>
-            <BillingDetails
-              preSelectedMonth={activeIndex}
-              handleSelectedMonthChange={(x) => setActiveIndex(x)}
-            />
-          </WebBrick>
+
+          <BillingDetails
+            preSelectedMonth={activeIndex}
+            handleSelectedMonthChange={(x) => setActiveIndex(x)}
+          />
+
           <MobileBrick>
             {Object.keys(chunkDetails).length > 0 && (
               <StyledDiv background={'#fff'}>

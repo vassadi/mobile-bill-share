@@ -23,6 +23,7 @@ import {
   monthYearSortComparator,
 } from '../../../utils';
 import NoBills from '../../molecules/NoBills';
+import { WebBrick } from '../../atoms/Bricks';
 
 const initialCharges = { devices: 0, additional: 0, kickbacks: 0, credits: 0 };
 
@@ -35,6 +36,7 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
 
   const [mode, setMode] = useState('view');
   const [billingMonth, setBillingMonth] = useState('');
+  const [dateWarningText, setDateWarningText] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(preSelectedMonth);
   const { isAdmin } = data;
 
@@ -174,12 +176,22 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
     [billingMonth, totalBill, data]
   );
 
+  const handleBillingMonthChange = (newMonth) => {
+    const formattedMonth = newMonth.format('YYYY-MM');
+
+    const warningMsg = data.monthlyBills[formattedMonth]
+      ? 'Bill was already added for this month.'
+      : '';
+
+    setDateWarningText(warningMsg);
+    setBillingMonth(newMonth);
+  };
   if (!data) return null;
 
   return (
     <div className="contentRoot">
       {selectedMonth || mode === 'edit' ? (
-        <>
+        <WebBrick>
           <FlexDiv
             align={'center'}
             justify={'space-between'}
@@ -209,11 +221,17 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
               {mode === 'edit' ? (
                 <>
                   <DatePicker
+                    className="mr-5"
                     label={'Billing moth'}
                     views={['month', 'year']}
                     value={billingMonth}
                     onChange={(newValue) => {
-                      setBillingMonth(newValue);
+                      handleBillingMonthChange(newValue);
+                    }}
+                    slotProps={{
+                      textField: {
+                        helperText: dateWarningText,
+                      },
                     }}
                   />
                   <TextField
@@ -253,7 +271,7 @@ const BillingDetails = ({ preSelectedMonth, handleSelectedMonthChange }) => {
               numberOfLines={chargeableLines}
             />
           </div>
-        </>
+        </WebBrick>
       ) : (
         <NoBills callbackAction={startAdding} />
       )}

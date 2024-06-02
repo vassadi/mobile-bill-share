@@ -12,6 +12,7 @@ import {
 
 import { useTranslation } from 'react-i18next';
 import StyledDiv from '../../atoms/StyledDiv/StyledDiv';
+import { MobileBrick, WebBrick } from '../../atoms/Bricks';
 
 const NoBills = ({ callbackAction }) => {
   const { isAdmin, name } = useContext(UserContext);
@@ -55,15 +56,23 @@ const NoBills = ({ callbackAction }) => {
             >
               {t('noBillsTitle')}
             </Typography>
-            <Typography sx={{ fontSize: 16 }} color="text.secondary">
-              {message}
-            </Typography>
+            <WebBrick>
+              <Typography sx={{ fontSize: 16 }} color="text.secondary">
+                {message}
+              </Typography>
+            </WebBrick>
+            <MobileBrick>
+              Please login into web version to add bills. Mobile app is not
+              supported for this yet.
+            </MobileBrick>
           </CardContent>
           <CardActions sx={{ p: 2 }}>
             {isAdmin && (
-              <Button size="small" onClick={callbackAction}>
-                Add bill
-              </Button>
+              <WebBrick>
+                <Button size="small" onClick={callbackAction}>
+                  Add bill
+                </Button>
+              </WebBrick>
             )}
           </CardActions>
         </Card>

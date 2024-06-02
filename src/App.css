@@ -1,6 +1,7 @@
 .contentRoot {
   max-width: 1280px;
   margin: 0 auto;
+  height: 100vh;
 }
 
 .card {
@@ -66,6 +67,11 @@ div.css-qvtrhg-MuiDataGrid-virtualScroller {
 
 .MuiDataGrid-columnHeaderTitle {
   font-weight: bold !important;
+}
+
+.MuiFormHelperText-filled {
+  color: darkorange !important;
+  margin: 3px 0 0 !important;
 }
 
 .register.MuiButtonBase-root,
