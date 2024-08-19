@@ -32,9 +32,13 @@ import {
 } from '../../../utils';
 
 import { useTranslation } from 'react-i18next';
-import { MobileBrick, WebBrick } from '../../atoms/Bricks';
+import { MobileBrick } from '../../atoms/Bricks';
 import KeyValueText from '../../atoms/KeyValueText/KeyValueText';
 import StyledDiv from '../../atoms/StyledDiv/StyledDiv';
+
+// import { OAuth2 } from 'oauth';
+
+import Splitwise from 'splitwise';
 
 const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState();
@@ -43,6 +47,45 @@ const Dashboard = () => {
   const [chunkDetails, setChunkDetails] = useState('');
 
   const { t } = useTranslation();
+
+  const SPLITWISE_CONSUMER_KEY = 'FWoRUfxlLgJlAExfB1PjVq2N3VobCOK4sT8gheHD';
+  const SPLITWISE_CONSUMER_SECRET = 'VZVMm8Ljrj96ldWVGt9mlq2dpG2LzvKzb75C5z1G';
+  // const API_URL = 'https://secure.splitwise.com/api/v3.0/';
+
+  const sw = Splitwise({
+    consumerKey: SPLITWISE_CONSUMER_KEY,
+    consumerSecret: SPLITWISE_CONSUMER_SECRET,
+  });
+
+  console.log(sw);
+
+  sw.getCurrentUser()
+    .then((result, x) => {
+      console.log(result, x);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+
+  // const oauth2 = new OAuth2(
+  //   SPLITWISE_CONSUMER_KEY,
+  //   SPLITWISE_CONSUMER_SECRET,
+  //   'https://secure.splitwise.com/',
+  //   null,
+  //   'oauth/token',
+  //   null
+  // );
+
+  // oauth2.getOAuthAccessToken(
+  //   '',
+  //   { grant_type: 'client_credentials' },
+  //   (_, token) => {
+  //     oauth2.get(`${API_URL}get_current_user/`, token, (_, data) => {
+  //       const user = JSON.parse(data).user;
+  //       console.log('U S E R  ', user);
+  //     });
+  //   }
+  // );
 
   const userInfo = getUserInfo();
   const phoneNumber = userInfo?.phoneNumber?.slice(-10);
