@@ -132,6 +132,11 @@ const BillingTable = ({
           grant_type: 'authorization_code',
           code: code,
           redirect_uri: REDIRCT_URL,
+        },
+        {
+          headers: {
+            'Access-Control-Allow-Origin': window.location.origin,
+          },
         }
       );
 
