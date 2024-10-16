@@ -36,9 +36,7 @@ import { MobileBrick } from '../../atoms/Bricks';
 import KeyValueText from '../../atoms/KeyValueText/KeyValueText';
 import StyledDiv from '../../atoms/StyledDiv/StyledDiv';
 
-// import { OAuth2 } from 'oauth';
-
-import Splitwise from 'splitwise';
+import { Toaster, toast } from 'react-hot-toast';
 
 const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState();
@@ -47,45 +45,6 @@ const Dashboard = () => {
   const [chunkDetails, setChunkDetails] = useState('');
 
   const { t } = useTranslation();
-
-  const SPLITWISE_CONSUMER_KEY = 'FWoRUfxlLgJlAExfB1PjVq2N3VobCOK4sT8gheHD';
-  const SPLITWISE_CONSUMER_SECRET = 'VZVMm8Ljrj96ldWVGt9mlq2dpG2LzvKzb75C5z1G';
-  // const API_URL = 'https://secure.splitwise.com/api/v3.0/';
-
-  const sw = Splitwise({
-    consumerKey: SPLITWISE_CONSUMER_KEY,
-    consumerSecret: SPLITWISE_CONSUMER_SECRET,
-  });
-
-  console.log(sw);
-
-  sw.getCurrentUser()
-    .then((result, x) => {
-      console.log(result, x);
-    })
-    .catch((e) => {
-      console.log(e);
-    });
-
-  // const oauth2 = new OAuth2(
-  //   SPLITWISE_CONSUMER_KEY,
-  //   SPLITWISE_CONSUMER_SECRET,
-  //   'https://secure.splitwise.com/',
-  //   null,
-  //   'oauth/token',
-  //   null
-  // );
-
-  // oauth2.getOAuthAccessToken(
-  //   '',
-  //   { grant_type: 'client_credentials' },
-  //   (_, token) => {
-  //     oauth2.get(`${API_URL}get_current_user/`, token, (_, data) => {
-  //       const user = JSON.parse(data).user;
-  //       console.log('U S E R  ', user);
-  //     });
-  //   }
-  // );
 
   const userInfo = getUserInfo();
   const phoneNumber = userInfo?.phoneNumber?.slice(-10);
@@ -102,9 +61,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     const dataObject = {};
-
     const fetchData = async () => {
       try {
+        // await connectSplitwiseAPI();
         // Get Group ID
         const usersRef = collection(store, 'users');
         const snap = query(usersRef, where('number', '==', phoneNumber));
@@ -203,6 +162,7 @@ const Dashboard = () => {
                   <h2>Hi {data.name},</h2>
                   <p>{t('welcomeMessage')}</p>
                 </div>
+                <Toaster toastOptions={{ duration: 4000 }} />
               </FlexDiv>
               <div className="flex flex-col gap-3 md:flex-row m-5">
                 <ResponsiveContainer height={300} className={'basis-3/4'}>

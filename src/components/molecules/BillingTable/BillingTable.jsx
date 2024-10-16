@@ -5,6 +5,7 @@ import FlexDiv from '../../atoms/FlexDiv';
 import { memo, useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/userContext';
 import { currencyFormatter, monthYearSortComparator } from '../../../utils';
+import axios from 'axios';
 
 const cellEditValidation = (params) => {
   if (params.hasChanged) {
@@ -109,10 +110,59 @@ const BillingTable = ({
   const isEditable = mode === 'edit';
 
   const [updatedRows, setUpdatedRows] = useState([]);
+  const [accessToken, setAccessToken] = useState(null);
 
   const compare = (a, b) => {
     return a.name < b.name ? -1 : 1;
   };
+
+  const SPLITWISE_CONSUMER_KEY = 'FWoRUfxlLgJlAExfB1PjVq2N3VobCOK4sT8gheHD';
+  const SPLITWISE_CONSUMER_SECRET = 'VZVMm8Ljrj96ldWVGt9mlq2dpG2LzvKzb75C5z1G';
+  const REDIRCT_URL = 'http://localhost:5173/mobile-bill-share/';
+
+  const exchangeCodeForToken = async (code) => {
+    try {
+      // In a real application, this should be done server-side to keep your client secret secure
+      const response = await axios.post(
+        'https://secure.splitwise.com/oauth/token',
+        {
+          client_id: SPLITWISE_CONSUMER_KEY,
+          client_secret: 'YOUR_CLIENT_SECRET', // Replace with your actual client secret
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: REDIRCT_URL,
+        }
+      );
+
+      setAccessToken(response.data.access_token);
+
+      const response1 = await axios.get(
+        'https://secure.splitwise.com/api/v3.0/get_current_user',
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.access_token}`,
+          },
+        }
+      );
+      // setUsers([response.data.user]);
+      // setLoading(false);
+      console.log(response1.data.user);
+    } catch (err) {
+      // setError('Failed to exchange code for token');
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    // Check if there's an access token in the URL (after OAuth redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+      exchangeCodeForToken(code);
+    }
+  }, []);
+
   useEffect(() => {
     console.log(' ***  BILLING TABLE  ***');
 
@@ -136,16 +186,36 @@ const BillingTable = ({
 
   const getFooter = () => (
     <FlexDiv justify={'right'} margin="15px 0 0 0">
-      <Button size="small" className="mr5" onClick={onCancel}>
-        Cancel
-      </Button>
-      <Button
-        variant="contained"
-        size="small"
-        onClick={() => onSave(updatedRows)}
-      >
-        Save Record
-      </Button>
+      {isEditable ? (
+        <>
+          <Button size="small" className="mr5" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => onSave(updatedRows)}
+          >
+            Save Record
+          </Button>
+        </>
+      ) : (
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => {
+            console.log('connecting to splitwise api...');
+            const clientId = 'FWoRUfxlLgJlAExfB1PjVq2N3VobCOK4sT8gheHD';
+            const redirectUri = 'http://localhost:5173/mobile-bill-share/';
+            const authUrl = `https://secure.splitwise.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
+              redirectUri
+            )}`;
+            window.location.href = authUrl;
+          }}
+        >
+          Update Splitwise
+        </Button>
+      )}
     </FlexDiv>
   );
 
@@ -184,7 +254,7 @@ const BillingTable = ({
           lineHeight: 1.3,
         },
       }}
-      {...(isEditable && { slots: slots })}
+      slots={slots}
       hideFooterSelectedRowCount
       experimentalFeatures={{ newEditingApi: true }}
       onCellEditStop={stopEditCell}

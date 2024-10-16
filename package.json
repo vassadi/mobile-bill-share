@@ -8,7 +8,7 @@
   ],
   "homepage": "https://vassadi.github.io/mobile-bill-share/",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --force",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -23,6 +23,7 @@
     "@mui/styled-engine-sc": "^6.0.0-alpha.7",
     "@mui/x-data-grid": "^6.18.2",
     "@mui/x-date-pickers": "^6.19.3",
+    "axios": "^1.7.7",
     "dayjs": "^1.11.10",
     "firebase": "^10.7.0",
     "firebase-admin": "^12.0.0",
@@ -38,7 +39,6 @@
     "react-phone-input-2": "^2.15.1",
     "recharts": "^2.12.6",
     "sass": "^1.71.1",
-    "splitwise": "^1.0.0",
     "styled-components": "^6.1.1"
   },
   "devDependencies": {
