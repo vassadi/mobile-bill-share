@@ -118,7 +118,8 @@ const BillingTable = ({
 
   const SPLITWISE_CONSUMER_KEY = 'FWoRUfxlLgJlAExfB1PjVq2N3VobCOK4sT8gheHD';
   const SPLITWISE_CONSUMER_SECRET = 'VZVMm8Ljrj96ldWVGt9mlq2dpG2LzvKzb75C5z1G';
-  const REDIRCT_URL = 'http://localhost:5173/mobile-bill-share/';
+  const REDIRCT_URL = 'https://vassadi.github.io/mobile-bill-share/';
+  // const REDIRCT_URL = 'http://localhost:5173/mobile-bill-share/';
 
   const exchangeCodeForToken = async (code) => {
     try {
@@ -127,7 +128,7 @@ const BillingTable = ({
         'https://secure.splitwise.com/oauth/token',
         {
           client_id: SPLITWISE_CONSUMER_KEY,
-          client_secret: 'YOUR_CLIENT_SECRET', // Replace with your actual client secret
+          client_secret: SPLITWISE_CONSUMER_SECRET,
           grant_type: 'authorization_code',
           code: code,
           redirect_uri: REDIRCT_URL,
