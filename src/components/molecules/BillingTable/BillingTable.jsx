@@ -207,10 +207,10 @@ const BillingTable = ({
           onClick={() => {
             console.log('connecting to splitwise api...');
             const clientId = 'FWoRUfxlLgJlAExfB1PjVq2N3VobCOK4sT8gheHD';
-            const redirectUri = 'http://localhost:5173/mobile-bill-share/';
+            // const redirectUri = 'http://localhost:5173/mobile-bill-share/';
             const authUrl = `https://secure.splitwise.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
-              redirectUri
-            )}`;
+              REDIRCT_URL
+            )}&state=srv-${Date.now()}`;
             window.location.href = authUrl;
           }}
         >
