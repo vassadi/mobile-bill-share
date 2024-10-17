@@ -7,6 +7,7 @@ import { UserContext } from '../../../context/userContext';
 import { currencyFormatter, monthYearSortComparator } from '../../../utils';
 import axios from 'axios';
 
+import Splitwise from 'splitwise';
 const cellEditValidation = (params) => {
   if (params.hasChanged) {
     const hasError = !Number.parseFloat(+params.props.value);
@@ -123,6 +124,15 @@ const BillingTable = ({
 
   const exchangeCodeForToken = async (code) => {
     try {
+      const sw = Splitwise({
+        consumerKey: SPLITWISE_CONSUMER_KEY,
+        consumerSecret: SPLITWISE_CONSUMER_SECRET,
+        logger: console.log,
+      });
+
+      sw.getAccessToken().then(console.log);
+      sw.getCurrentUser().then(console.log);
+
       // In a real application, this should be done server-side to keep your client secret secure
       const response = await axios.post(
         'https://secure.splitwise.com/oauth/token',
@@ -135,6 +145,7 @@ const BillingTable = ({
         },
         {
           headers: {
+            Authorization: `Bearer jTENQtQVHGognajqyR6zxl109iVOBWeoqg2D6Csg`,
             'Access-Control-Allow-Origin': window.location.origin,
           },
         }

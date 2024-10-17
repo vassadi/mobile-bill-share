@@ -39,6 +39,7 @@
     "react-phone-input-2": "^2.15.1",
     "recharts": "^2.12.6",
     "sass": "^1.71.1",
+    "splitwise": "^1.0.0",
     "styled-components": "^6.1.1"
   },
   "devDependencies": {
