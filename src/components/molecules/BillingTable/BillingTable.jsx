@@ -145,7 +145,6 @@ const BillingTable = ({
         },
         {
           headers: {
-            Authorization: `Bearer FTR0yYgDwM1CvfMv4LcnKhOPPD8yhVk5QuYbb5ua`,
             'Access-Control-Allow-Origin': window.location.origin,
             'Content-Type': 'application/x-www-form-urlencoded',
           },
