@@ -124,14 +124,14 @@ const BillingTable = ({
 
   const exchangeCodeForToken = async (code) => {
     try {
-      const sw = Splitwise({
-        consumerKey: SPLITWISE_CONSUMER_KEY,
-        consumerSecret: SPLITWISE_CONSUMER_SECRET,
-        logger: console.log,
-      });
+      // const sw = Splitwise({
+      //   consumerKey: SPLITWISE_CONSUMER_KEY,
+      //   consumerSecret: SPLITWISE_CONSUMER_SECRET,
+      //   logger: console.log,
+      // });
 
-      sw.getAccessToken().then(console.log);
-      sw.getCurrentUser().then(console.log);
+      // sw.getAccessToken().then(console.log);
+      // sw.getCurrentUser().then(console.log);
 
       // In a real application, this should be done server-side to keep your client secret secure
       const response = await axios.post(
@@ -145,7 +145,9 @@ const BillingTable = ({
         },
         {
           headers: {
+            Authorization: `Bearer FTR0yYgDwM1CvfMv4LcnKhOPPD8yhVk5QuYbb5ua`,
             'Access-Control-Allow-Origin': window.location.origin,
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
         }
       );
