@@ -4,7 +4,11 @@ import { DataGrid } from '@mui/x-data-grid';
 import FlexDiv from '../../atoms/FlexDiv';
 import { memo, useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../context/userContext';
-import { currencyFormatter, monthYearSortComparator } from '../../../utils';
+import {
+  currencyFormatter,
+  getData,
+  monthYearSortComparator,
+} from '../../../utils';
 import axios from 'axios';
 
 import Splitwise from 'splitwise';
@@ -134,22 +138,46 @@ const BillingTable = ({
       // sw.getCurrentUser().then(console.log);
 
       // In a real application, this should be done server-side to keep your client secret secure
-      const response = await axios.post(
-        'https://secure.splitwise.com/oauth/token',
-        {
-          client_id: SPLITWISE_CONSUMER_KEY,
-          client_secret: SPLITWISE_CONSUMER_SECRET,
-          grant_type: 'authorization_code',
-          code: code,
-          redirect_uri: REDIRCT_URL,
-        },
-        {
-          headers: {
-            'Access-Control-Allow-Origin': window.location.origin,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        }
-      );
+      // const response = await axios.post(
+      //   'https://secure.splitwise.com/oauth/token',
+      //   {
+      //     client_id: SPLITWISE_CONSUMER_KEY,
+      //     client_secret: SPLITWISE_CONSUMER_SECRET,
+      //     grant_type: 'authorization_code',
+      //     code: code,
+      //     redirect_uri: REDIRCT_URL,
+      //   },
+      //   {
+      //     headers: {
+      //       'Access-Control-Allow-Origin': window.location.origin,
+      //       'Content-Type': 'application/x-www-form-urlencoded',
+      //     },
+      //   }
+      // );
+
+      getData('https://secure.splitwise.com/oauth/token', {
+        client_id: SPLITWISE_CONSUMER_KEY,
+        client_secret: SPLITWISE_CONSUMER_SECRET,
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: REDIRCT_URL,
+      });
+
+      getData('https://secure.splitwise.com/oauth/request_token', {
+        client_id: SPLITWISE_CONSUMER_KEY,
+        client_secret: SPLITWISE_CONSUMER_SECRET,
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: REDIRCT_URL,
+      });
+
+      getData('https://secure.splitwise.com/oauth/access_token', {
+        client_id: SPLITWISE_CONSUMER_KEY,
+        client_secret: SPLITWISE_CONSUMER_SECRET,
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: REDIRCT_URL,
+      });
 
       setAccessToken(response.data.access_token);
 
