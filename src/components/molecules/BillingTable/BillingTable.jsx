@@ -179,13 +179,13 @@ const BillingTable = ({
         redirect_uri: REDIRCT_URL,
       });
 
-      setAccessToken(response.data.access_token);
+      // setAccessToken(response.data.access_token);
 
       const response1 = await axios.get(
         'https://secure.splitwise.com/api/v3.0/get_current_user',
         {
           headers: {
-            Authorization: `Bearer ${response.data.access_token}`,
+            Authorization: `Bearer `,
           },
         }
       );
